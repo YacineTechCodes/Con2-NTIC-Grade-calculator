@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MI: Semester 1 Grade Calculator</title>
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1a1a1a;
+            --primary: #4f46e5;
+            --border-color: #e0e7ff;
+            --input-bg: #f8fafc;
+            --module-bg: #ffffff;
+            --unit-bg: linear-gradient(to bottom right, #eef2ff, #ffffff);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #111827;
+            --text-color: #f3f4f6;
+            --primary: #6366f1;
+            --border-color: #374151;
+            --input-bg: #1f2937;
+            --module-bg: #1f2937;
+            --unit-bg: linear-gradient(to bottom right, #1f2937, #111827);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, sans-serif;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .dark-mode-toggle {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            background: var(--input-bg);
+            border: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .unit-section {
+            background: var(--unit-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .module {
+            background: var(--module-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            position: relative;
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .coefficient {
+            background: var(--input-bg);
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        .input-group span {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.875rem;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        .results {
+            background: var(--primary);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .module-grade {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .unit-grade {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-left: 1rem;
+            color: var(--primary);
+        }
+
+        .unit-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .md\:grid-cols-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .save-load-container {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .save-load-container button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .save-load-container button:hover {
+            opacity: 0.9;
+        }
+
+        .saves-list {
+            margin-top: 1rem;
+        }
+
+        .saves-list button {
+            display: block;
+            width: 100%;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background: var(--input-bg);
+            color: var(--text-color);
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .saves-list button:hover {
+            background: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1 class="card-title">MI: Semester 1 Grade Calculator</h1>
+                <button class="dark-mode-toggle" id="darkModeToggle">
+                    <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" style="display: none;">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M12 2v2"></path>
+                        <path d="M12 20v2"></path>
+                        <path d="m4.93 4.93 1.41 1.41"></path>
+                        <path d="m17.66 17.66 1.41 1.41"></path>
+                        <path d="M2 12h2"></path>
+                        <path d="M20 12h2"></path>
+                        <path d="m6.34 17.66-1.41 1.41"></path>
+                        <path d="m19.07 4.93-1.41 1.41"></path>
+                    </svg>
+                    <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="card-content" style="padding: 1.5rem;">
+                <div id="unitSections"></div>
+                <div id="resultsContainer" class="results">
+                    <h3 id="finalResult">Final Result: 0.00</h3>
+                </div>
+
+                <!-- Save/Load Section -->
+                <div class="save-load-container">
+                    <button id="saveButton">Save Current Grades</button>
+                    <button id="loadButton">Load Saved Grades</button>
+                </div>
+
+                <!-- Saved Grades List -->
+                <div class="saves-list" id="savesList">
+                    <h4>Saved Grades:</h4>
+                    <!-- Saved grades will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const state = {
+            grades: {
+                algoControl: '', algoTd: '', algoTp: '',
+                analysisControl: '', analysisTd: '',
+                algebraControl: '', algebraTd: '',
+                compControl: '', compTd: '',
+                criControl: '', criTd: '',
+                terminology: '',
+                english: '',
+                bureau: ''
+            },
+            results: {
+                finalResult: 0.00,
+                unit1: 0.00,
+                unit2: 0.00,
+                unit3: 0.00,
+                unit4: 0.00,
+                modules: {}
+            }
+        };
+
+        // Dark Mode Toggle
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            state.isDarkMode = !state.isDarkMode;
+            document.documentElement.setAttribute('data-theme', state.isDarkMode ? 'dark' : 'light');
+            document.getElementById('sunIcon').style.display = state.isDarkMode ? 'block' : 'none';
+            document.getElementById('moonIcon').style.display = state.isDarkMode ? 'none' : 'block';
+        });
+
+        // Input Handling
+        function handleInput(e) {
+            const { name, value } = e.target;
+
+            if (value === '') {
+                state.grades[name] = '';
+                updateCalculations();
+                return;
+            }
+
+            const numValue = parseFloat(value);
+            if (isNaN(numValue)) {
+                e.target.value = state.grades[name] || '';
+                return;
+            }
+
+            if (numValue < 0 || numValue > 20) {
+                e.target.value = state.grades[name] || '';
+                return;
+            }
+
+            state.grades[name] = numValue;
+            updateCalculations();
+        }
+
+        function handleBlur(e) {
+            const { name, value } = e.target;
+            if (value === '') return;
+
+            const numValue = parseFloat(value);
+            const rounded = Math.round(numValue * 100) / 100;
+            state.grades[name] = rounded;
+            e.target.value = rounded.toFixed(2);
+            updateCalculations();
+        }
+
+        // Calculation Formulas
+        const formulas = {
+            Algorithms: values => 0.16 * values.algoTd + 0.16 * values.algoTp + 0.68 * values.algoControl,
+            Analysis: values => 0.33 * values.analysisTd + 0.67 * values.analysisControl,
+            Algebra: values => 0.4 * values.algebraTd + 0.6 * values.algebraControl,
+            Comp: values => 0.4 * values.compTd + 0.6 * values.compControl,
+            CRI: values => 0.33 * values.criTd + 0.67 * values.criControl,
+            Terminology: values => values.terminology,
+            Bureau: values => values.bureau,
+            English: values => values.english
+        };
+
+        // Automatic Calculation
+        function updateCalculations() {
+            const numbers = Object.fromEntries(
+                Object.entries(state.grades).map(([key, value]) => [key, parseFloat(value) || 0])
+            );
+
+            // Calculate module grades
+            state.results.modules = {
+                Algorithms: formulas.Algorithms(numbers),
+                Analysis: formulas.Analysis(numbers),
+                Algebra: formulas.Algebra(numbers),
+                Comp: formulas.Comp(numbers),
+                CRI: formulas.CRI(numbers),
+                Terminology: formulas.Terminology(numbers),
+                Bureau: formulas.Bureau(numbers),
+                English: formulas.English(numbers)
+            };
+
+            // Calculate unit grades
+            state.results.unit1 = (state.results.modules.Algorithms +
+                state.results.modules.Analysis +
+                state.results.modules.Algebra) / 3;
+
+            state.results.unit2 = (state.results.modules.Terminology +
+                state.results.modules.Bureau) / 2;
+
+            state.results.unit3 = (state.results.modules.Comp +
+                state.results.modules.CRI) / 2;
+
+            state.results.unit4 = state.results.modules.English;
+
+            // Calculate final result
+            state.results.finalResult = (
+                state.results.modules.Algorithms * 4 +
+                state.results.modules.Analysis * 4 +
+                state.results.modules.Algebra * 2 +
+                state.results.modules.CRI * 2 +
+                state.results.modules.Comp * 2 +
+                state.results.modules.Terminology +
+                state.results.modules.English +
+                state.results.modules.Bureau
+            ) / 17;
+
+            updateDisplay();
+        }
+
+        // Update Display
+        function updateDisplay() {
+            // Update module grades
+            document.querySelectorAll('.module-grade').forEach(el => {
+                const moduleName = el.dataset.module;
+                el.textContent = `Grade: ${state.results.modules[moduleName].toFixed(2)}`;
+            });
+
+            // Update unit grades
+            document.querySelectorAll('.unit-grade').forEach((el, index) => {
+                const unitKey = `unit${index + 1}`;
+                el.textContent = state.results[unitKey].toFixed(2);
+            });
+
+            // Update final result
+            document.getElementById('finalResult').textContent =
+                `Final Result: ${state.results.finalResult.toFixed(2)}`;
+        }
+
+        // Module Creator
+        function createModule(moduleConfig) {
+            const moduleDiv = document.createElement('div');
+            moduleDiv.className = 'module';
+
+            const header = document.createElement('div');
+            header.className = 'module-header';
+
+            const title = document.createElement('h3');
+            title.textContent = moduleConfig.title;
+
+            if (moduleConfig.coefficient) {
+                const coef = document.createElement('span');
+                coef.className = 'coefficient';
+                coef.textContent = `Coef: ${moduleConfig.coefficient}`;
+                header.appendChild(coef);
+            }
+
+            header.prepend(title);
+            moduleDiv.appendChild(header);
+
+            moduleConfig.fields.forEach(field => {
+                const group = document.createElement('div');
+                group.className = 'input-group';
+
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.min = 0;
+                input.max = 20;
+                input.step = '0.01';
+                input.name = field.name;
+                input.placeholder = field.placeholder;
+                input.addEventListener('input', handleInput);
+                input.addEventListener('blur', handleBlur);
+
+                const max = document.createElement('span');
+                max.textContent = '/20';
+
+                group.appendChild(input);
+                group.appendChild(max);
+                moduleDiv.appendChild(group);
+            });
+
+            const gradeDisplay = document.createElement('div');
+            gradeDisplay.className = 'module-grade';
+            gradeDisplay.dataset.module = moduleConfig.title;
+            gradeDisplay.textContent = 'Grade: 0.00';
+            moduleDiv.appendChild(gradeDisplay);
+
+            return moduleDiv;
+        }
+
+        // Unit Creator
+        function createUnit(unitConfig) {
+            const unitDiv = document.createElement('div');
+            unitDiv.className = 'unit-section';
+
+            const header = document.createElement('div');
+            header.className = 'unit-header';
+
+            const title = document.createElement('h2');
+            title.textContent = unitConfig.title;
+
+            const grade = document.createElement('span');
+            grade.className = 'unit-grade';
+            grade.textContent = '0.00';
+
+            header.appendChild(title);
+            header.appendChild(grade);
+            unitDiv.appendChild(header);
+
+            const grid = document.createElement('div');
+            grid.className = `grid ${unitConfig.gridClass}`;
+
+            unitConfig.modules.forEach(module => {
+                grid.appendChild(createModule(module));
+            });
+
+            unitDiv.appendChild(grid);
+            return unitDiv;
+        }
+
+        // Initialize Calculator
+        function init() {
+            const unitSections = document.getElementById('unitSections');
+
+            // Unit 1: Fundamental
+            unitSections.appendChild(createUnit({
+                title: 'Fundamental',
+                gridClass: 'md:grid-cols-3',
+                modules: [
+                    {
+                        title: 'Algorithms',
+                        coefficient: 4,
+                        fields: [
+                            { name: 'algoTd', placeholder: 'TD Grade' },
+                            { name: 'algoTp', placeholder: 'TP Grade' },
+                            { name: 'algoControl', placeholder: 'Control Grade' }
+                        ]
+                    },
+                    {
+                        title: 'Analysis',
+                        coefficient: 4,
+                        fields: [
+                            { name: 'analysisTd', placeholder: 'TD Grade' },
+                            { name: 'analysisControl', placeholder: 'Control Grade' }
+                        ]
+                    },
+                    {
+                        title: 'Algebra',
+                        coefficient: 2,
+                        fields: [
+                            { name: 'algebraTd', placeholder: 'TD Grade' },
+                            { name: 'algebraControl', placeholder: 'Control Grade' }
+                        ]
+                    }
+                ]
+            }));
+
+            // Unit 2: Methodological
+            unitSections.appendChild(createUnit({
+                title: 'Methodological',
+                gridClass: 'md:grid-cols-2',
+                modules: [
+                    {
+                        title: 'Terminology',
+                        coefficient: 1,
+                        fields: [
+                            { name: 'terminology', placeholder: 'Grade' }
+                        ]
+                    },
+                    {
+                        title: 'Bureau',
+                        coefficient: 1,
+                        fields: [
+                            { name: 'bureau', placeholder: 'Grade' }
+                        ]
+                    }
+                ]
+            }));
+
+            // Unit 3: Discovery
+            unitSections.appendChild(createUnit({
+                title: 'Discovery',
+                gridClass: 'md:grid-cols-2',
+                modules: [
+                    {
+                        title: 'Comp',
+                        coefficient: 2,
+                        fields: [
+                            { name: 'compTd', placeholder: 'TD Grade' },
+                            { name: 'compControl', placeholder: 'Control Grade' }
+                        ]
+                    },
+                    {
+                        title: 'CRI',
+                        coefficient: 2,
+                        fields: [
+                            { name: 'criTd', placeholder: 'TD Grade' },
+                            { name: 'criControl', placeholder: 'Control Grade' }
+                        ]
+                    }
+                ]
+            }));
+
+            // Unit 4: Transversal
+            unitSections.appendChild(createUnit({
+                title: 'Transversal',
+                gridClass: 'grid-cols-1',
+                modules: [
+                    {
+                        title: 'English',
+                        coefficient: 1,
+                        fields: [
+                            { name: 'english', placeholder: 'Grade' }
+                        ]
+                    }
+                ]
+            }));
+        }
+
+        init();
+        // Save/Load System
+        let savedGrades = JSON.parse(localStorage.getItem('savedGrades')) || [];
+
+        function saveCurrentGrades() {
+            const saveName = prompt("Enter a name for this save:");
+            if (!saveName) return;
+
+            const saveData = {
+                name: saveName,
+                grades: state.grades,
+                timestamp: new Date().toLocaleString()
+            };
+
+            savedGrades.push(saveData);
+            localStorage.setItem('savedGrades', JSON.stringify(savedGrades));
+            updateSavesList();
+        }
+
+        function loadGrades(saveIndex) {
+            const save = savedGrades[saveIndex];
+            if (!save) return;
+
+            // Update state with saved grades
+            Object.keys(save.grades).forEach(key => {
+                state.grades[key] = save.grades[key];
+                const input = document.querySelector(`input[name="${key}"]`);
+                if (input) {
+                    input.value = save.grades[key];
+                }
+            });
+
+            updateCalculations();
+            alert(`Loaded save: ${save.name}`);
+        }
+
+        function updateSavesList() {
+            const savesList = document.getElementById('savesList');
+            savesList.innerHTML = '<h4>Saved Grades:</h4>';
+
+            if (savedGrades.length === 0) {
+                savesList.innerHTML += '<p>No saves found.</p>';
+                return;
+            }
+
+            savedGrades.forEach((save, index) => {
+                const button = document.createElement('button');
+                button.textContent = `${save.name} (${save.timestamp})`;
+                button.addEventListener('click', () => loadGrades(index));
+                savesList.appendChild(button);
+            });
+        }
+
+        function deleteSave(saveIndex) {
+            savedGrades.splice(saveIndex, 1);
+            localStorage.setItem('savedGrades', JSON.stringify(savedGrades));
+            updateSavesList();
+        }
+
+        // Event Listeners for Save/Load
+        document.getElementById('saveButton').addEventListener('click', saveCurrentGrades);
+        document.getElementById('loadButton').addEventListener('click', () => {
+            if (savedGrades.length === 0) {
+                alert("No saved grades found!");
+                return;
+            }
+            updateSavesList();
+        });
+
+        // Initialize Saves List
+        updateSavesList();
+    </script>
+</body>
+
+</html>

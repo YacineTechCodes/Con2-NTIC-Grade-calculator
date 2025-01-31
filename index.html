@@ -262,6 +262,17 @@
             background: var(--primary);
             color: white;
         }
+
+        .input-group input[type="number"]::-webkit-outer-spin-button,
+        .input-group input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .input-group input[type="number"] {
+            -moz-appearance: textfield;
+            /* For Firefox */
+        }
     </style>
 </head>
 
@@ -510,9 +521,9 @@
                 input.type = 'number';
                 input.min = 0;
                 input.max = 20;
-                input.step = '0.01';
                 input.name = field.name;
                 input.placeholder = field.placeholder;
+                input.onwheel = () => input.blur();
                 input.addEventListener('input', handleInput);
                 input.addEventListener('blur', handleBlur);
 

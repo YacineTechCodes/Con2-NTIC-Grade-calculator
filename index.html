@@ -277,7 +277,7 @@
                 criControl: '', criTd: '',
                 terminology: '',
                 english: '',
-                bureau: ''
+                bureautique: ''
             },
             results: {
                 finalResult: 0.00,
@@ -341,7 +341,7 @@
             Comp: values => 0.4 * values.compTd + 0.6 * values.compControl,
             CRI: values => 0.33 * values.criTd + 0.67 * values.criControl,
             Terminology: values => values.terminology,
-            Bureau: values => values.bureau,
+            Bureautique: values => values.bureautique,
             English: values => values.english
         };
 
@@ -359,7 +359,7 @@
                 Comp: formulas.Comp(numbers),
                 CRI: formulas.CRI(numbers),
                 Terminology: formulas.Terminology(numbers),
-                Bureau: formulas.Bureau(numbers),
+                Bureautique: formulas.Bureautique(numbers),
                 English: formulas.English(numbers)
             };
 
@@ -369,7 +369,7 @@
                 state.results.modules.Algebra) / 3;
 
             state.results.unit2 = (state.results.modules.Terminology +
-                state.results.modules.Bureau) / 2;
+                state.results.modules.Bureautique) / 2;
 
             state.results.unit3 = (state.results.modules.Comp +
                 state.results.modules.CRI) / 2;
@@ -385,7 +385,7 @@
                 state.results.modules.Comp * 2 +
                 state.results.modules.Terminology +
                 state.results.modules.English +
-                state.results.modules.Bureau
+                state.results.modules.Bureautique
             ) / 17;
 
             updateDisplay();
@@ -545,7 +545,7 @@
                         title: 'Bureautique',
                         coefficient: 1,
                         fields: [
-                            { name: 'bureau', placeholder: 'Grade' }
+                            { name: 'bureautique', placeholder: 'Grade' }
                         ]
                     }
                 ]

@@ -67,13 +67,59 @@
         }
 
         .dark-mode-toggle {
+            width: 40px;
+            /* Square size */
+            height: 40px;
+            /* Square size */
             padding: 0.5rem;
             border-radius: 0.5rem;
+            /* Slightly rounded corners */
             cursor: pointer;
             background: var(--input-bg);
-            border: none;
+            /* Use the same background as inputs */
+            border: 1px solid var(--border-color);
+            /* Add a border */
             display: flex;
             align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .dark-mode-toggle:hover {
+            background: var(--primary);
+            /* Change background on hover */
+            border-color: var(--primary);
+            /* Change border color on hover */
+        }
+
+        .dark-mode-toggle svg {
+            width: 24px;
+            /* Icon size */
+            height: 24px;
+            /* Icon size */
+            stroke: var(--text-color);
+            /* Use the text color for the icons */
+            transition: stroke 0.3s;
+        }
+
+        .dark-mode-toggle:hover svg {
+            stroke: white;
+            /* Change icon color on hover */
+        }
+
+        #sunIcon {
+            display: none;
+            /* Hide sun icon by default */
+        }
+
+        [data-theme="dark"] #sunIcon {
+            display: block;
+            /* Show sun icon in dark mode */
+        }
+
+        [data-theme="dark"] #moonIcon {
+            display: none;
+            /* Hide moon icon in dark mode */
         }
 
         .unit-section {
@@ -269,6 +315,7 @@
 
     <script>
         const state = {
+            isDarkMode: false, // Initialize dark mode state
             grades: {
                 algoControl: '', algoTd: '', algoTp: '',
                 analysisControl: '', analysisTd: '',
@@ -289,12 +336,36 @@
             }
         };
 
+
+        // Load Dark Mode Preference on Page Load
+        function loadDarkModePreference() {
+            const savedDarkMode = localStorage.getItem('darkMode');
+            if (savedDarkMode) {
+                state.isDarkMode = savedDarkMode === 'dark'; // Set state based on saved preference
+                document.documentElement.setAttribute('data-theme', savedDarkMode); // Apply the theme
+                document.getElementById('sunIcon').style.display = state.isDarkMode ? 'block' : 'none'; // Toggle icons
+                document.getElementById('moonIcon').style.display = state.isDarkMode ? 'none' : 'block';
+            } else {
+                // If no preference is saved, default to light mode
+                document.documentElement.setAttribute('data-theme', 'light');
+                document.getElementById('sunIcon').style.display = 'none';
+                document.getElementById('moonIcon').style.display = 'block';
+            }
+        }
+
+        // Call the function to load the dark mode preference when the page loads
+        loadDarkModePreference();
+
         // Dark Mode Toggle
         document.getElementById('darkModeToggle').addEventListener('click', () => {
-            state.isDarkMode = !state.isDarkMode;
-            document.documentElement.setAttribute('data-theme', state.isDarkMode ? 'dark' : 'light');
-            document.getElementById('sunIcon').style.display = state.isDarkMode ? 'block' : 'none';
+            state.isDarkMode = !state.isDarkMode; // Toggle the state
+            const theme = state.isDarkMode ? 'dark' : 'light'; // Determine the new theme
+            document.documentElement.setAttribute('data-theme', theme); // Apply the theme
+            document.getElementById('sunIcon').style.display = state.isDarkMode ? 'block' : 'none'; // Toggle icons
             document.getElementById('moonIcon').style.display = state.isDarkMode ? 'none' : 'block';
+
+            // Save the dark mode preference to localStorage
+            localStorage.setItem('darkMode', theme);
         });
 
         // Input Handling

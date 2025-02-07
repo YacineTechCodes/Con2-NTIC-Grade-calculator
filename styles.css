@@ -1,0 +1,318 @@
+:root {
+    --bg-color: #ffffff;
+    --text-color: #1a1a1a;
+    --primary: #4f46e5;
+    --border-color: #e0e7ff;
+    --input-bg: #f8fafc;
+    --module-bg: #ffffff;
+    --unit-bg: linear-gradient(to bottom right, #eef2ff, #ffffff);
+}
+
+[data-theme="dark"] {
+    --bg-color: #111827;
+    --text-color: #f3f4f6;
+    --primary: #6366f1;
+    --border-color: #374151;
+    --input-bg: #1f2937;
+    --module-bg: #1f2937;
+    --unit-bg: linear-gradient(to bottom right, #1f2937, #111827);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, sans-serif;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+body {
+    background: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.card {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.dark-mode-toggle {
+    width: 40px;
+    /* Square size */
+    height: 40px;
+    /* Square size */
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    /* Slightly rounded corners */
+    cursor: pointer;
+    background: var(--input-bg);
+    /* Use the same background as inputs */
+    border: 1px solid var(--border-color);
+    /* Add a border */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.dark-mode-toggle:hover {
+    background: var(--primary);
+    /* Change background on hover */
+    border-color: var(--primary);
+    /* Change border color on hover */
+}
+
+.dark-mode-toggle svg {
+    width: 24px;
+    /* Icon size */
+    height: 24px;
+    /* Icon size */
+    stroke: var(--text-color);
+    /* Use the text color for the icons */
+    transition: stroke 0.3s;
+}
+
+.dark-mode-toggle:hover svg {
+    stroke: white;
+    /* Change icon color on hover */
+}
+
+#sunIcon {
+    display: none;
+    /* Hide sun icon by default */
+}
+
+[data-theme="dark"] #sunIcon {
+    display: block;
+    /* Show sun icon in dark mode */
+}
+
+[data-theme="dark"] #moonIcon {
+    display: none;
+    /* Hide moon icon in dark mode */
+}
+
+.unit-section {
+    background: var(--unit-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.module {
+    background: var(--module-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    position: relative;
+}
+
+.module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.coefficient {
+    background: var(--input-bg);
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    background: var(--input-bg);
+    color: var(--text-color);
+}
+
+.input-group span {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.875rem;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.results {
+    background: var(--primary);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.module-grade {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    margin-top: 0.5rem;
+    opacity: 0.9;
+}
+
+.unit-grade {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-left: 1rem;
+    color: var(--primary);
+}
+
+.unit-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .md\:grid-cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .md\:grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.save-load-container {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.save-load-container button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.save-load-container button:hover {
+    opacity: 0.9;
+}
+
+.saves-list {
+    margin-top: 1rem;
+}
+
+.saves-list button {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    background: var(--input-bg);
+    color: var(--text-color);
+    cursor: pointer;
+    text-align: left;
+}
+
+.saves-list button:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.input-group input[type="number"]::-webkit-outer-spin-button,
+.input-group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input-group input[type="number"] {
+    -moz-appearance: textfield;
+    /* For Firefox */
+}
+
+/* Add this to your existing styles.css */
+.semester-nav {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.semester-nav a {
+    text-decoration: none;
+    color: var(--text-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+}
+
+.semester-nav a:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.semester-nav a.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .semester-nav {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    .semester-nav a {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem;
+    }
+}

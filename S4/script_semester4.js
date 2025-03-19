@@ -1,49 +1,201 @@
-// Made using AI (I don't know js lol)
+// semester4.js - Specific code for Semester 4
 
-const state = {
-    isDarkMode: false,
-};
+// Initialize state for Semester 4
+const state = initializeState({
+    // Unit 1
+    dbControl: '', dbTdTp: '',
+    osControl: '', osTdTp: '',
+    swEngControl: '', swEngTd: '',
 
-// Load Dark Mode Preference on Page Load
-function loadDarkModePreference() {
-    const savedDarkMode = localStorage.getItem('darkMode');
-    if (savedDarkMode) {
-        state.isDarkMode = savedDarkMode === 'dark'; // Set state based on saved preference
-        document.documentElement.setAttribute('data-theme', savedDarkMode); // Apply the theme
-        document.getElementById('sunIcon').style.display = state.isDarkMode ? 'block' : 'none'; // Toggle icons
-        document.getElementById('moonIcon').style.display = state.isDarkMode ? 'none' : 'block';
-    } else {
-        // If no preference is saved, default to light mode
-        document.documentElement.setAttribute('data-theme', 'light');
-        document.getElementById('sunIcon').style.display = 'none';
-        document.getElementById('moonIcon').style.display = 'block';
-    }
-}
+    // Unit 2
+    graphTheoryControl: '', graphTheoryTd: '',
+    networkControl: '', networkTd: '', networkTp: '',
+    webDevControl: '', webDevTp: '',
 
-// Call the function to load the dark mode preference when the page loads
-loadDarkModePreference();
-
-// Dark Mode Toggle
-document.getElementById('darkModeToggle').addEventListener('click', () => {
-    state.isDarkMode = !state.isDarkMode; // Toggle the state
-    const theme = state.isDarkMode ? 'dark' : 'light'; // Determine the new theme
-    document.documentElement.setAttribute('data-theme', theme); // Apply the theme
-    document.getElementById('sunIcon').style.display = state.isDarkMode ? 'block' : 'none'; // Toggle icons
-    document.getElementById('moonIcon').style.display = state.isDarkMode ? 'none' : 'block';
-
-    // Save the dark mode preference to localStorage
-    localStorage.setItem('darkMode', theme);
+    // Unit 3
+    legalControl: '',
+    english3Control: ''
 });
 
 // Calculation Formulas
 const formulas = {
-    Analysis: values => 0.66 * values.analysisControl + 0.34 * values.analysisTd,
-    Algebra: values => 0.67 * values.algebraControl + 0.33 * values.algebraTd,
-    ProbabilityStatistics: values => 0.66 * values.probStatsControl + 0.34 * values.probStatsTd,
-    ProgrammingDataStructures: values => 0.68 * values.pdsControl + 0.16 * values.pdsTd + 0.16 * values.pdsTp,
-    MachineStructure: values => 0.66 * values.machineControl + 0.34 * values.machineTd,
-    ICT: values => 1.00 * values.ictControl,
-    IntroOOP: values => 0.60 * values.oopControl + 0.40 * values.oopTp,
-    GeneralElectricity: values => 0.70 * values.geControl + 0.30 * values.geTd,
-    HistoryScience: values => 1.00 * values.historyControl
+    Database: values => 0.67 * values.dbControl + 0.33 * values.dbTdTp,
+    OperatingSystems: values => 0.67 * values.osControl + 0.33 * values.osTdTp,
+    SoftwareEngineering: values => 0.67 * values.swEngControl + 0.33 * values.swEngTd,
+    GraphTheory: values => 0.70 * values.graphTheoryControl + 0.30 * values.graphTheoryTd,
+    NetworkCommunication: values => 0.50 * values.networkControl + 0.25 * values.networkTd + 0.25 * values.networkTp,
+    WebDevelopment: values => 0.70 * values.webDevControl + 0.30 * values.webDevTp,
+    LegalAspects: values => 1.00 * values.legalControl,
+    English3: values => 1.00 * values.english3Control
 };
+
+// Module name mapping
+const moduleNames = {
+    'Database': 'Database',
+    'Operating Systems': 'OperatingSystems',
+    'Software Engineering': 'SoftwareEngineering',
+    'Graph Theory': 'GraphTheory',
+    'Network Communication': 'NetworkCommunication',
+    'Web Development': 'WebDevelopment',
+    'Legal & Economic Aspects': 'LegalAspects',
+    'English 3': 'English3'
+};
+
+// Update calculations for Semester 4
+function updateCalculations() {
+    const numbers = Object.fromEntries(
+        Object.entries(state.grades).map(([key, value]) => [key, parseFloat(value) || 0])
+    );
+
+    // Module grades
+    state.results.modules = {
+        Database: formulas.Database(numbers),
+        OperatingSystems: formulas.OperatingSystems(numbers),
+        SoftwareEngineering: formulas.SoftwareEngineering(numbers),
+        GraphTheory: formulas.GraphTheory(numbers),
+        NetworkCommunication: formulas.NetworkCommunication(numbers),
+        WebDevelopment: formulas.WebDevelopment(numbers),
+        LegalAspects: formulas.LegalAspects(numbers),
+        English3: formulas.English3(numbers)
+    };
+
+    // Unit averages
+    state.results.unit1 = (
+        state.results.modules.Database * 2 +
+        state.results.modules.OperatingSystems * 3 +
+        state.results.modules.SoftwareEngineering * 2
+    ) / 7;
+
+    state.results.unit2 = (
+        state.results.modules.GraphTheory * 2 +
+        state.results.modules.NetworkCommunication * 3 +
+        state.results.modules.WebDevelopment * 2
+    ) / 7;
+
+    state.results.unit3 = (
+        state.results.modules.LegalAspects * 1 +
+        state.results.modules.English3 * 1
+    ) / 2;
+
+    // Final result (total weighted average)
+    state.results.finalResult = (
+        state.results.modules.Database * 2 +
+        state.results.modules.OperatingSystems * 3 +
+        state.results.modules.SoftwareEngineering * 2 +
+        state.results.modules.GraphTheory * 2 +
+        state.results.modules.NetworkCommunication * 3 +
+        state.results.modules.WebDevelopment * 2 +
+        state.results.modules.LegalAspects * 1 +
+        state.results.modules.English3 * 1
+    ) / 16; // Total coefficients = 16
+
+    updateDisplay(state, moduleNames);
+}
+
+// Initialize the page
+function init() {
+    // Load dark mode preference
+    loadDarkModePreference(state);
+
+    // Setup dark mode toggle
+    setupDarkModeToggle(state);
+
+    // Create input handlers with specific state
+    const handleInputFn = (e) => handleInput(e, state, updateCalculations);
+    const handleBlurFn = (e) => handleBlur(e, state, updateCalculations);
+
+    const unitSections = document.getElementById('unitSections');
+
+    // Unit 1: Fundamental
+    unitSections.appendChild(createUnit({
+        title: 'Unit 1: Fundamental',
+        gridClass: 'md:grid-cols-3',
+        modules: [
+            {
+                title: 'Database',
+                coefficient: 2,
+                fields: [
+                    { name: 'dbControl', placeholder: 'Control (67%)' },
+                    { name: 'dbTdTp', placeholder: 'TD + TP (33%)' }
+                ]
+            },
+            {
+                title: 'Operating Systems',
+                coefficient: 3,
+                fields: [
+                    { name: 'osControl', placeholder: 'Control (67%)' },
+                    { name: 'osTdTp', placeholder: 'TD + TP (33%)' }
+                ]
+            },
+            {
+                title: 'Software Engineering',
+                coefficient: 2,
+                fields: [
+                    { name: 'swEngControl', placeholder: 'Control (67%)' },
+                    { name: 'swEngTd', placeholder: 'TD (33%)' }
+                ]
+            }
+        ]
+    }, handleInputFn, handleBlurFn));
+
+    // Unit 2: Fundamental
+    unitSections.appendChild(createUnit({
+        title: 'Unit 2: Fundamental',
+        gridClass: 'md:grid-cols-3',
+        modules: [
+            {
+                title: 'Graph Theory',
+                coefficient: 2,
+                fields: [
+                    { name: 'graphTheoryControl', placeholder: 'Control (70%)' },
+                    { name: 'graphTheoryTd', placeholder: 'TD (30%)' }
+                ]
+            },
+            {
+                title: 'Network Communication',
+                coefficient: 3,
+                fields: [
+                    { name: 'networkControl', placeholder: 'Control (50%)' },
+                    { name: 'networkTd', placeholder: 'TD (25%)' },
+                    { name: 'networkTp', placeholder: 'TP (25%)' }
+                ]
+            },
+            {
+                title: 'Web Development',
+                coefficient: 2,
+                fields: [
+                    { name: 'webDevControl', placeholder: 'Control (70%)' },
+                    { name: 'webDevTp', placeholder: 'TP (30%)' }
+                ]
+            }
+        ]
+    }, handleInputFn, handleBlurFn));
+
+    // Unit 3: Methodological
+    unitSections.appendChild(createUnit({
+        title: 'Unit 3: Methodological',
+        gridClass: 'md:grid-cols-2',
+        modules: [
+            {
+                title: 'Legal & Economic Aspects',
+                coefficient: 1,
+                fields: [
+                    { name: 'legalControl', placeholder: 'Control (100%)' }
+                ]
+            },
+            {
+                title: 'English 3',
+                coefficient: 1,
+                fields: [
+                    { name: 'english3Control', placeholder: 'Control (100%)' }
+                ]
+            }
+        ]
+    }, handleInputFn, handleBlurFn));
+
+    // Setup save/load system
+    setupSaveLoadSystem(state, 'savedGradesSemester4');
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', init);

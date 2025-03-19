@@ -4,12 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MI: Grade Calculator</title>
+    <title>MI: Semester 1 Grade Calculator</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="styles - Home.css">
 </head>
 
-<body class="home-page">
+<body>
     <div class="container">
         <nav class="semester-nav">
             <a href="index.html" class="active">Home</a>
@@ -18,103 +17,10 @@
             <a href="S3/semester3.html">Semester 3</a>
             <a href="S4/semester4.html">Semester 4</a>
         </nav>
-
-        <div class="card">
-            <div class="card-header">
-                <h1 class="card-title">MI Grade Calculator</h1>
-                <button class="dark-mode-toggle" id="darkModeToggle">
-                    <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                </button>
-            </div>
-
-            <div class="card-content">
-                <div class="welcome-section">
-                    <h2>Welcome to Your Grade Calculator</h2>
-                    <p>Track your academic progress and calculate your grades across all four semesters. Plan your study
-                        priorities and monitor your performance with this easy-to-use grade calculator.</p>
-                </div>
-
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                        </svg>
-                        <h3>Track All Semesters</h3>
-                        <p>Manage your grades for all four semesters in one place.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-                            <line x1="12" y1="18" x2="12" y2="18"></line>
-                            <line x1="8" y1="6" x2="16" y2="6"></line>
-                            <line x1="8" y1="10" x2="16" y2="10"></line>
-                            <line x1="8" y1="14" x2="16" y2="14"></line>
-                        </svg>
-                        <h3>Save Your Progress</h3>
-                        <p>Save and load your grade calculations at any time.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-                        </svg>
-                        <h3>Visualize Performance</h3>
-                        <p>See your grades and module performance at a glance.</p>
-                    </div>
-
-                    <div class="feature-card">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 16v-4"></path>
-                            <path d="M12 8h.01"></path>
-                        </svg>
-                        <h3>Simple Interface</h3>
-                        <p>User-friendly design with dark mode support.</p>
-                    </div>
-                </div>
-
-                <div class="get-started-section">
-                    <h2>Get Started</h2>
-                    <p>Select a semester from the navigation above to begin calculating your grades.</p>
-                    <div class="semester-buttons">
-                        <a href="S1/semester1.html" class="semester-button">Semester 1</a>
-                        <a href="S2/semester2.html" class="semester-button">Semester 2</a>
-                        <a href="S3/semester3.html" class="semester-button">Semester 3</a>
-                        <a href="S4/semester4.html" class="semester-button">Semester 4</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <footer class="footer">
-            <p>MI Grade Calculator &copy; 2025</p>
-        </footer>
     </div>
-    <script src="script - Common.js"></script>
-    <script src="script - Home.js"></script>
+    <script src="script.js"></script>
+
+
 </body>
 
 </html>

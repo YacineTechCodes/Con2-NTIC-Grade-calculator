@@ -7,6 +7,13 @@
     <title>NTIC MI: Grade Calculator - Univ. Constantine 2</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="styles - Home.css">
+    <script>
+        // Apply dark mode immediately before page renders
+        const savedDarkMode = localStorage.getItem('darkMode');
+        if (savedDarkMode === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
 </head>
 
 <body class="home-page">

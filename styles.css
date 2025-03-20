@@ -1,4 +1,5 @@
 :root {
+    /* Color variables */
     --bg-color: #ffffff;
     --text-color: #1a1a1a;
     --primary: #4f46e5;
@@ -6,6 +7,25 @@
     --input-bg: #f8fafc;
     --module-bg: #ffffff;
     --unit-bg: linear-gradient(to bottom right, #eef2ff, #ffffff);
+    
+    /* Spacing variables */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    /* Border radius */
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    
+    /* Transitions */
+    --transition-speed: 0.3s;
+    
+    /* Box shadow */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 [data-theme="dark"] {
@@ -18,35 +38,40 @@
     --unit-bg: linear-gradient(to bottom right, #1f2937, #111827);
 }
 
+/* Reset & Base Styles */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: system-ui, sans-serif;
-    transition: background-color 0.3s, border-color 0.3s;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 }
 
 body {
     background: var(--bg-color);
     color: var(--text-color);
     min-height: 100vh;
-    padding: 2rem;
+    padding: var(--spacing-xl);
+    line-height: 1.5;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
 .container {
     max-width: 1000px;
     margin: 0 auto;
+    width: 100%;
 }
 
+/* Card Components */
 .card {
     background: var(--bg-color);
     border: 1px solid var(--border-color);
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: border-color var(--transition-speed), background-color var(--transition-speed);
 }
 
 .card-header {
-    padding: 1.5rem;
+    padding: var(--spacing-lg);
     border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
@@ -58,149 +83,143 @@ body {
     font-weight: 600;
 }
 
+/* Dark Mode Toggle */
 .dark-mode-toggle {
     width: 40px;
-    /* Square size */
     height: 40px;
-    /* Square size */
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    /* Slightly rounded corners */
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     background: var(--input-bg);
-    /* Use the same background as inputs */
     border: 1px solid var(--border-color);
-    /* Add a border */
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s, border-color 0.3s;
+    transition: background-color var(--transition-speed), border-color var(--transition-speed);
 }
 
 .dark-mode-toggle:hover {
     background: var(--primary);
-    /* Change background on hover */
     border-color: var(--primary);
-    /* Change border color on hover */
 }
 
 .dark-mode-toggle svg {
     width: 24px;
-    /* Icon size */
     height: 24px;
-    /* Icon size */
     stroke: var(--text-color);
-    /* Use the text color for the icons */
-    transition: stroke 0.3s;
+    transition: stroke var(--transition-speed);
 }
 
 .dark-mode-toggle:hover svg {
     stroke: white;
-    /* Change icon color on hover */
 }
 
 #sunIcon {
     display: none;
-    /* Hide sun icon by default */
 }
 
 [data-theme="dark"] #sunIcon {
     display: block;
-    /* Show sun icon in dark mode */
 }
 
 [data-theme="dark"] #moonIcon {
     display: none;
-    /* Hide moon icon in dark mode */
 }
 
+/* Unit and Module Components */
 .unit-section {
     background: var(--unit-bg);
     border: 1px solid var(--border-color);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    margin: 1rem 0;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin: var(--spacing-md) 0;
+    transition: background var(--transition-speed), border-color var(--transition-speed);
 }
 
 .module {
     background: var(--module-bg);
     border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin: 0.5rem 0;
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-md);
+    margin: var(--spacing-sm) 0;
     position: relative;
+    transition: background-color var(--transition-speed), border-color var(--transition-speed);
 }
 
 .module-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: var(--spacing-md);
 }
 
 .coefficient {
     background: var(--input-bg);
-    padding: 0.25rem 0.5rem;
+    padding: var(--spacing-xs) var(--spacing-sm);
     border-radius: 1rem;
     font-size: 0.875rem;
 }
 
+/* Input Groups */
 .input-group {
     position: relative;
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--spacing-sm);
 }
 
 .input-group input {
     width: 100%;
-    padding: 0.5rem;
+    padding: var(--spacing-sm);
     border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
+    border-radius: var(--radius-sm);
     background: var(--input-bg);
     color: var(--text-color);
+    transition: border-color var(--transition-speed), background-color var(--transition-speed);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
 .input-group span {
     position: absolute;
-    right: 0.5rem;
+    right: var(--spacing-sm);
     top: 50%;
     transform: translateY(-50%);
     font-size: 0.875rem;
     color: var(--text-color);
     opacity: 0.7;
+    pointer-events: none;
 }
 
+/* Numeric Input Styling */
+.input-group input[type="number"]::-webkit-outer-spin-button,
+.input-group input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.input-group input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+/* Results Display */
 .results {
     background: var(--primary);
     color: white;
-    padding: 1.5rem;
-    border-radius: 0.5rem;
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-sm);
     text-align: center;
-    margin-top: 1rem;
+    margin-top: var(--spacing-md);
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
 }
 
+/* Grid Layout */
 .grid {
     display: grid;
-    gap: 1rem;
-}
-
-.module-grade {
-    font-size: 0.9rem;
-    color: var(--text-color);
-    margin-top: 0.5rem;
-    opacity: 0.9;
-}
-
-.unit-grade {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-left: 1rem;
-    color: var(--primary);
-}
-
-.unit-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1.5rem;
+    gap: var(--spacing-md);
 }
 
 @media (min-width: 768px) {
@@ -213,41 +232,72 @@ body {
     }
 }
 
+/* Grade Display */
+.module-grade {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    margin-top: var(--spacing-sm);
+    opacity: 0.9;
+}
+
+.unit-grade {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-left: var(--spacing-md);
+    color: var(--primary);
+}
+
+.unit-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Save & Load Controls */
 .save-load-container {
     display: flex;
-    gap: 1rem;
-    margin-top: 1rem;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+    flex-wrap: wrap;
 }
 
 .save-load-container button {
-    padding: 0.5rem 1rem;
+    padding: var(--spacing-sm) var(--spacing-md);
     border: none;
-    border-radius: 0.5rem;
+    border-radius: var(--radius-sm);
     background: var(--primary);
     color: white;
     cursor: pointer;
     font-weight: 600;
+    transition: opacity 0.2s ease;
 }
 
 .save-load-container button:hover {
     opacity: 0.9;
 }
 
+.save-load-container button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
+}
+
 .saves-list {
-    margin-top: 1rem;
+    margin-top: var(--spacing-md);
+    width: 100%;
 }
 
 .saves-list button {
     display: block;
     width: 100%;
-    margin-bottom: 0.5rem;
-    padding: 0.5rem;
+    margin-bottom: var(--spacing-sm);
+    padding: var(--spacing-sm);
     border: 1px solid var(--border-color);
-    border-radius: 0.5rem;
+    border-radius: var(--radius-sm);
     background: var(--input-bg);
     color: var(--text-color);
     cursor: pointer;
     text-align: left;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .saves-list button:hover {
@@ -255,35 +305,24 @@ body {
     color: white;
 }
 
-.input-group input[type="number"]::-webkit-outer-spin-button,
-.input-group input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-.input-group input[type="number"] {
-    -moz-appearance: textfield;
-    /* For Firefox */
-}
-
-/* Add this to your existing styles.css */
+/* Semester Navigation */
 .semester-nav {
     background: var(--bg-color);
     border: 1px solid var(--border-color);
-    border-radius: 1rem;
-    padding: 1rem;
-    margin-bottom: 2rem;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    margin-bottom: calc(var(--spacing-xl));
     display: flex;
-    gap: 0.5rem;
+    gap: var(--spacing-sm);
     flex-wrap: wrap;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
 }
 
 .semester-nav a {
     text-decoration: none;
     color: var(--text-color);
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.75rem;
+    padding: calc(var(--spacing-sm) + 0.25rem) var(--spacing-lg);
+    border-radius: var(--radius-md);
     font-weight: 500;
     transition: all 0.2s ease;
     background: var(--input-bg);
@@ -304,15 +343,46 @@ body {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+    body {
+        padding: var(--spacing-md);
+    }
+    
+    .card-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        align-items: flex-start;
+    }
+    
     .semester-nav {
         flex-direction: column;
-        gap: 0.5rem;
-        padding: 0.75rem;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-sm);
     }
 
     .semester-nav a {
         width: 100%;
         text-align: center;
-        padding: 0.75rem;
+        padding: var(--spacing-sm);
     }
+    
+    .save-load-container {
+        flex-direction: column;
+    }
+    
+    .save-load-container button {
+        width: 100%;
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}
+
+/* Focus styles for keyboard navigation */
+a:focus, button:focus, input:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
 }

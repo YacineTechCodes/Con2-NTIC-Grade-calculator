@@ -298,7 +298,7 @@ const themes = {
     'forest-dark': {
         '--bg-color': '#1a2c1a',
         '--text-color': '#e0f2e0',
-        '--primary': '#4ade80',
+        '--primary': '#248146',
         '--border-color': '#2d5a3d',
         '--input-bg': '#243024',
         '--module-bg': '#1e2a1e',
@@ -307,7 +307,7 @@ const themes = {
     'ocean-dark': {
         '--bg-color': '#0f172a',
         '--text-color': '#e0f2fe',
-        '--primary': '#38bdf8',
+        '--primary': '#2e90bb',
         '--border-color': '#1e3a5f',
         '--input-bg': '#1e293b',
         '--module-bg': '#162032',
@@ -372,39 +372,60 @@ function createThemeSwitcher() {
     themeHeading.textContent = 'Choose Theme';
     themeSection.appendChild(themeHeading);
 
-    // Create theme buttons container
-    const themeButtons = document.createElement('div');
-    themeButtons.className = 'theme-buttons';
+    // Create container for theme groups
+    const themeGroupContainer = document.createElement('div');
+    themeGroupContainer.className = 'theme-group-container';
 
-    // Define theme groups
-    const themeGroups = {
-        'Default': ['light', 'dark'],
-        'Forest': ['forest-light', 'forest-dark'],
-        'Ocean': ['ocean-light', 'ocean-dark'],
-        'Sunset': ['sunset-light', 'sunset-dark']
-    };
+    // Define theme groups with a more structured approach
+    const themeGroups = [
+        {
+            name: 'Default',
+            themes: [
+                { id: 'light', name: 'Light' },
+                { id: 'dark', name: 'Dark' }
+            ]
+        },
+        {
+            name: 'Nature',
+            themes: [
+                { id: 'forest-light', name: 'Forest Light' },
+                { id: 'forest-dark', name: 'Forest Dark' }
+            ]
+        },
+        {
+            name: 'Ocean',
+            themes: [
+                { id: 'ocean-light', name: 'Ocean Light' },
+                { id: 'ocean-dark', name: 'Ocean Dark' }
+            ]
+        },
+        {
+            name: 'Sunset',
+            themes: [
+                { id: 'sunset-light', name: 'Sunset Light' },
+                { id: 'sunset-dark', name: 'Sunset Dark' }
+            ]
+        }
+    ];
 
-    // Add theme buttons by group
-    Object.entries(themeGroups).forEach(([groupName, themeNames]) => {
-        // Create group label
-        const groupLabel = document.createElement('div');
-        groupLabel.className = 'theme-group-label';
-        groupLabel.textContent = groupName;
-        themeButtons.appendChild(groupLabel);
+    // Create theme groups
+    themeGroups.forEach(group => {
+        const groupWrapper = document.createElement('div');
+        groupWrapper.className = 'theme-group';
 
-        // Create theme variant container
-        const variantContainer = document.createElement('div');
-        variantContainer.className = 'theme-variant-container';
+        const groupName = document.createElement('div');
+        groupName.className = 'theme-group-name';
+        groupName.textContent = group.name;
+        groupWrapper.appendChild(groupName);
 
-        // Add theme variant buttons
-        themeNames.forEach(themeName => {
+        const themeButtonContainer = document.createElement('div');
+        themeButtonContainer.className = 'theme-button-container';
+
+        group.themes.forEach(theme => {
             const button = document.createElement('button');
             button.className = 'theme-button';
-            button.dataset.theme = themeName;
-
-            // Set display name (Light/Dark variant)
-            const isLight = themeName.includes('light');
-            button.textContent = isLight ? 'Light' : 'Dark';
+            button.dataset.theme = theme.id;
+            button.textContent = theme.name;
 
             button.addEventListener('click', () => {
                 // Remove active class from all buttons
@@ -416,23 +437,24 @@ function createThemeSwitcher() {
                 button.classList.add('active');
 
                 // Apply theme
-                applyTheme(themeName);
+                applyTheme(theme.id);
             });
 
-            variantContainer.appendChild(button);
+            themeButtonContainer.appendChild(button);
         });
 
-        themeButtons.appendChild(variantContainer);
+        groupWrapper.appendChild(themeButtonContainer);
+        themeGroupContainer.appendChild(groupWrapper);
     });
 
-    themeSection.appendChild(themeButtons);
+    themeSection.appendChild(themeGroupContainer);
 
-    // Insert after semester nav on home page
-    const card = document.querySelector('.card');
-    if (card) {
-        container.insertBefore(themeSection, card);
+    // Insert before the footer
+    const footer = document.querySelector('.footer');
+    if (footer) {
+        container.insertBefore(themeSection, footer);
     } else {
-        container.prepend(themeSection);
+        container.appendChild(themeSection);
     }
 }
 

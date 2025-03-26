@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MI: Semester 1 Grade Calculator</title>
+    <link rel="stylesheet" href="../styles.css">
+    <!-- Add this to the <head> section of all your HTML files -->
+    <script>
+        // Immediately apply saved theme to prevent flash of unstyled content
+        (function () {
+            // Get theme from localStorage
+            const savedTheme = localStorage.getItem('preferredTheme');
+
+            // Define themes (must match the ones in your main script)
+            const themes = {
+                light: {
+                    '--bg-color': '#ffffff',
+                    '--text-color': '#1a1a1a',
+                    '--primary': '#4f46e5',
+                    '--border-color': '#e0e7ff',
+                    '--input-bg': '#f8fafc',
+                    '--module-bg': '#ffffff',
+                    '--unit-bg': 'linear-gradient(to bottom right, #eef2ff, #ffffff)'
+                },
+                dark: {
+                    '--bg-color': '#1a1a1a',
+                    '--text-color': '#f8fafc',
+                    '--primary': '#818cf8',
+                    '--border-color': '#374151',
+                    '--input-bg': '#2a2a2a',
+                    '--module-bg': '#222222',
+                    '--unit-bg': 'linear-gradient(to bottom right, #1f2937, #111827)'
+                },
+                forest: {
+                    '--bg-color': '#f8faf8',
+                    '--text-color': '#1e3a29',
+                    '--primary': '#2d6a4f',
+                    '--border-color': '#d8f3dc',
+                    '--input-bg': '#f1f8f2',
+                    '--module-bg': '#ffffff',
+                    '--unit-bg': 'linear-gradient(to bottom right, #e9f5ec, #ffffff)'
+                },
+                ocean: {
+                    '--bg-color': '#f0f4f8',
+                    '--text-color': '#0d3b66',
+                    '--primary': '#1e6091',
+                    '--border-color': '#caf0f8',
+                    '--input-bg': '#ecf5fc',
+                    '--module-bg': '#ffffff',
+                    '--unit-bg': 'linear-gradient(to bottom right, #e0f7fa, #ffffff)'
+                },
+                sunset: {
+                    '--bg-color': '#fff8f3',
+                    '--text-color': '#6a3d2b',
+                    '--primary': '#e76f51',
+                    '--border-color': '#ffefeb',
+                    '--input-bg': '#fff8f5',
+                    '--module-bg': '#ffffff',
+                    '--unit-bg': 'linear-gradient(to bottom right, #ffeeeb, #ffffff)'
+                }
+            };
+
+            // Apply theme if saved
+            if (savedTheme && themes[savedTheme]) {
+                Object.entries(themes[savedTheme]).forEach(([property, value]) => {
+                    document.documentElement.style.setProperty(property, value);
+                });
+            }
+        })();
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <nav class="semester-nav">
+            <a href="../index.html">Home</a>
+            <a href="../S1/semester1.html" class="active">Semester 1</a>
+            <a href="../S2/semester2.html">Semester 2</a>
+            <a href="../S3/semester3.html">Semester 3</a>
+            <a href="../S4/semester4.html">Semester 4</a>
+        </nav>
+
+        <div class="card">
+            <div class="card-header">
+                <h1 class="card-title">MI: Semester 1 Grade Calculator</h1>
+            </div>
+
+            <div class="card-content" style="padding: 1.5rem;">
+                <div id="unitSections"></div>
+                <div id="resultsContainer" class="results">
+                    <h3 id="finalResult">Final Result: 0.00</h3>
+                </div>
+
+                <!-- Save/Load Section -->
+                <div class="save-load-container">
+                    <button id="saveButton">Save Current Grades</button>
+                    <button id="loadButton">Load Saved Grades</button>
+                </div>
+
+                <!-- Saved Grades List -->
+                <div class="saves-list" id="savesList">
+                    <h4>Saved Grades:</h4>
+                    <!-- Saved grades will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../script_common.js"></script>
+    <script src="script_semester1.js"></script>
+</body>
+
+</html>

@@ -105,11 +105,3 @@
 .semester-button:hover {
     opacity: 0.9;
 }
-
-.footer {
-    margin-top: 2rem;
-    padding: 1rem 0;
-    text-align: center;
-    opacity: 0.7;
-    font-size: 0.875rem;
-}

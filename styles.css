@@ -115,12 +115,18 @@ body {
 
 .input-group input {
     width: 100%;
-    padding: var(--spacing-sm);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     background: var(--input-bg);
     color: var(--text-color);
     transition: border-color var(--transition-speed), background-color var(--transition-speed);
+    font-size: 16px;
+    /* Prevents automatic zoom on focus */
+    padding: 12px;
+    /* Larger touch area */
+    height: 48px;
+    /* Minimum recommended touch height */
+
 }
 
 .input-group input:focus {
@@ -148,6 +154,7 @@ body {
 }
 
 .input-group input[type="number"] {
+    -webkit-appearance: none;
     -moz-appearance: textfield;
 }
 
@@ -384,55 +391,6 @@ input:focus {
     border-color: var(--primary);
 }
 
-/* Theme preview indicators */
-.theme-button[data-theme="light"]::before {
-    content: "☀️ ";
-}
-
-.theme-button[data-theme="dark"]::before {
-    content: "🌙 ";
-}
-
-.theme-button[data-theme*="forest-light"]::before {
-    content: "🌲☀️ ";
-}
-
-.theme-button[data-theme*="forest-dark"]::before {
-    content: "🌲🌙 ";
-}
-
-.theme-button[data-theme*="ocean-light"]::before {
-    content: "🌊☀️ ";
-}
-
-.theme-button[data-theme*="ocean-dark"]::before {
-    content: "🌊🌙 ";
-}
-
-.theme-button[data-theme*="sunset-light"]::before {
-    content: "🌅☀️ ";
-}
-
-.theme-button[data-theme*="sunset-dark"]::before {
-    content: "🌅🌙 ";
-}
-
-.theme-button[data-theme*="purple-light"]::before {
-    content: "🟣☀️ ";
-}
-
-.theme-button[data-theme*="purple-dark"]::before {
-    content: "🟣🌙 ";
-}
-
-.theme-button[data-theme*="mint-light"]::before {
-    content: "🌿☀️ ";
-}
-
-.theme-button[data-theme*="mint-dark"]::before {
-    content: "🌿🌙 ";
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .theme-buttons {
@@ -442,4 +400,56 @@ input:focus {
     .theme-button {
         width: 100%;
     }
+}
+
+@media (max-width: 480px) {
+    .grid {
+        grid-template-columns: 1fr !important;
+        /* Force single column */
+    }
+
+    .unit-section,
+    .module {
+        padding: 10px;
+        /* Tighter mobile spacing */
+    }
+
+    body {
+        padding: 10px;
+        /* Minimal padding on very small screens */
+    }
+
+    .theme-selector {
+        padding: 10px;
+        /* Tighter theme selector */
+    }
+
+    .themes-grid {
+        grid-template-columns: repeat(2, 1fr);
+        /* Compact theme grid */
+    }
+}
+
+/* Increased touch target sizes */
+button,
+a,
+.theme-button {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    :root {
+        --text-color: #000;
+        --bg-color: #fff;
+    }
+}
+
+.footer {
+    margin-top: 2rem;
+    padding: 1rem 0;
+    text-align: center;
+    opacity: 0.7;
+    font-size: 0.875rem;
 }

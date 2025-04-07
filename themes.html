@@ -3,9 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MI: Semester 2 Grade Calculator</title>
-    <link rel="stylesheet" href="../styles.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NTIC MI: Grade Calculator - Univ. Constantine 2</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles - Home.css">
     <script>
         // Immediately apply saved theme to prevent flash of unstyled content
         (function () {
@@ -71,41 +72,16 @@
     </script>
 </head>
 
-<body>
+<body class="themes">
     <div class="container">
         <nav class="semester-nav">
-            <a href="../index.html">Home</a>
-            <a href="../themes.html">Themes</a>
-            <a href="../S1/semester1.html">Semester 1</a>
-            <a href="../S2/semester2.html" class="active">Semester 2</a>
-            <a href="../S3/semester3.html">Semester 3</a>
-            <a href="../S4/semester4.html">Semester 4</a>
+            <a href="index.html">Home</a>
+            <a href="themes.html" class="active">Themes</a>
+            <a href="S1/semester1.html">Semester 1</a>
+            <a href="S2/semester2.html">Semester 2</a>
+            <a href="S3/semester3.html">Semester 3</a>
+            <a href="S4/semester4.html">Semester 4</a>
         </nav>
-
-        <div class="card">
-            <div class="card-header">
-                <h1 class="card-title">MI: Semester 2 Grade Calculator</h1>
-            </div>
-
-            <div class="card-content" style="padding: 1.5rem;">
-                <div id="unitSections"></div>
-                <div id="resultsContainer" class="results">
-                    <h3 id="finalResult">Final Result: 0.00</h3>
-                </div>
-
-                <!-- Save/Load Section -->
-                <div class="save-load-container">
-                    <button id="saveButton">Save Current Grades</button>
-                    <button id="loadButton">Load Saved Grades</button>
-                </div>
-
-                <!-- Saved Grades List -->
-                <div class="saves-list" id="savesList">
-                    <h4>Saved Grades:</h4>
-                    <!-- Saved grades will appear here -->
-                </div>
-            </div>
-        </div>
 
         <footer class="footer">
             <p>MI Grade Calculator &copy; 2025 | For University Constantine 2 NTIC students | Student-created tool</p>
@@ -120,8 +96,7 @@
             </p>
         </footer>
     </div>
-    <script src="../script_common.js"></script>
-    <script src="script_semester2.js"></script>
+    <script src="script_common.js"></script>
 </body>
 
 </html>

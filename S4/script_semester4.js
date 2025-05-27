@@ -19,12 +19,12 @@ const state = initializeState({
 
 // Calculation Formulas
 const formulas = {
-    Database: values => 0.67 * values.dbControl + 0.33 * values.dbTdTp,
+    Database: values => 0.7 * values.dbControl + 0.3 * values.dbTdTp,
     OperatingSystems: values => 0.67 * values.osControl + 0.33 * values.osTdTp,
     SoftwareEngineering: values => 0.67 * values.swEngControl + 0.33 * values.swEngTd,
     GraphTheory: values => 0.70 * values.graphTheoryControl + 0.30 * values.graphTheoryTd,
     NetworkCommunication: values => 0.50 * values.networkControl + 0.25 * values.networkTd + 0.25 * values.networkTp,
-    WebDevelopment: values => 0.70 * values.webDevControl + 0.30 * values.webDevTp,
+    WebDevelopment: values => 0.60 * values.webDevControl + 0.40 * values.webDevTp,
     LegalAspects: values => 1.00 * values.legalControl,
     English3: values => 1.00 * values.english3Control
 };
@@ -110,8 +110,8 @@ function init() {
                 title: 'Database',
                 coefficient: 2,
                 fields: [
-                    { name: 'dbControl', placeholder: 'Control (67%)' },
-                    { name: 'dbTdTp', placeholder: 'TD + TP (33%)' }
+                    { name: 'dbControl', placeholder: 'Control (70%)' },
+                    { name: 'dbTdTp', placeholder: 'TD + TP (30%)' }
                 ]
             },
             {
@@ -159,8 +159,8 @@ function init() {
                 title: 'Web Development',
                 coefficient: 2,
                 fields: [
-                    { name: 'webDevControl', placeholder: 'Control (70%)' },
-                    { name: 'webDevTp', placeholder: 'TP (30%)' }
+                    { name: 'webDevControl', placeholder: 'Control (60%)' },
+                    { name: 'webDevTp', placeholder: 'TP (40%)' }
                 ]
             }
         ]

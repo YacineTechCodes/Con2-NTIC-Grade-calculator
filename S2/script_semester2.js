@@ -37,7 +37,7 @@ const moduleNames = {
 const formulas = {
     Analysis: values => 0.66 * values.analysisControl + 0.34 * values.analysisTd,
     Algebra: values => 0.67 * values.algebraControl + 0.33 * values.algebraTd,
-    ProbabilityStatistics: values => 0.66 * values.probStatsControl + 0.34 * values.probStatsTd,
+    ProbabilityStatistics: values => 0.67 * values.probStatsControl + 0.33 * values.probStatsTd,
     ProgrammingDataStructures: values => 0.68 * values.pdsControl + 0.16 * values.pdsTd + 0.16 * values.pdsTp,
     MachineStructure: values => 0.66 * values.machineControl + 0.34 * values.machineTd,
     ICT: values => 1.00 * values.ictControl,
@@ -137,8 +137,8 @@ function init() {
                 title: 'Probability & Statistics',
                 coefficient: 1,
                 fields: [
-                    { name: 'probStatsControl', placeholder: 'Control (66%)' },
-                    { name: 'probStatsTd', placeholder: 'TD (34%)' }
+                    { name: 'probStatsControl', placeholder: 'Control (67%)' },
+                    { name: 'probStatsTd', placeholder: 'TD (33%)' }
                 ]
             }
         ]

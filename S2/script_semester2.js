@@ -36,13 +36,13 @@ const moduleNames = {
 // Calculation Formulas
 const formulas = {
     Analysis: values => 0.66 * values.analysisControl + 0.34 * values.analysisTd,
-    Algebra: values => 0.67 * values.algebraControl + 0.33 * values.algebraTd,
+    Algebra: values => 0.6 * values.algebraControl + 0.4 * values.algebraTd,
     ProbabilityStatistics: values => 0.67 * values.probStatsControl + 0.33 * values.probStatsTd,
     ProgrammingDataStructures: values => 0.68 * values.pdsControl + 0.16 * values.pdsTd + 0.16 * values.pdsTp,
     MachineStructure: values => 0.66 * values.machineControl + 0.34 * values.machineTd,
     ICT: values => 1.00 * values.ictControl,
     IntroOOP: values => 0.60 * values.oopControl + 0.40 * values.oopTp,
-    GeneralElectricity: values => 0.70 * values.geControl + 0.30 * values.geTd,
+    GeneralElectricity: values => 0.80 * values.geControl + 0.20 * values.geTd,
     HistoryScience: values => 1.00 * values.historyControl
 };
 
@@ -129,8 +129,8 @@ function init() {
                 title: 'Algebra',
                 coefficient: 2,
                 fields: [
-                    { name: 'algebraControl', placeholder: 'Control (67%)' },
-                    { name: 'algebraTd', placeholder: 'TD (33%)' }
+                    { name: 'algebraControl', placeholder: 'Control (60%)' },
+                    { name: 'algebraTd', placeholder: 'TD (40%)' }
                 ]
             },
             {
@@ -201,8 +201,8 @@ function init() {
                 title: 'General Electricity',
                 coefficient: 2,
                 fields: [
-                    { name: 'geControl', placeholder: 'Control (70%)' },
-                    { name: 'geTd', placeholder: 'TD (30%)' }
+                    { name: 'geControl', placeholder: 'Control (80%)' },
+                    { name: 'geTd', placeholder: 'TD (20%)' }
                 ]
             },
             {

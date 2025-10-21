@@ -22,8 +22,8 @@ const formulas = {
     ComputerArchitecture: values => 0.67 * values.compArchControl + 0.33 * values.compArchTp,
     MathematicalLogic: values => 0.67 * values.mathLogicControl + 0.33 * values.mathLogicTd,
     ObjectOrientedProgramming: values => 0.67 * values.oopControl + 0.165 * values.oopTd + 0.165 * values.oopTp,
-    InformationSystems: values => 0.67 * values.infoSysControl + 0.33 * values.infoSysTd,
-    LanguageTheory: values => 0.50 * values.langTheoryControl + 0.50 * values.langTheoryTd,
+    InformationSystems: values => 0.60 * values.infoSysControl + 0.40 * values.infoSysTd,
+    LanguageTheory: values => 0.60 * values.langTheoryControl + 0.40 * values.langTheoryTd,
     English2: values => 1.00 * values.english2Control
 };
 
@@ -144,16 +144,16 @@ function init() {
                 title: 'Information Systems',
                 coefficient: 3,
                 fields: [
-                    { name: 'infoSysControl', placeholder: 'Control (67%)' },
-                    { name: 'infoSysTd', placeholder: 'TD (33%)' }
+                    { name: 'infoSysControl', placeholder: 'Control (60%)' },
+                    { name: 'infoSysTd', placeholder: 'TD (40%)' }
                 ]
             },
             {
                 title: 'Language Theory',
                 coefficient: 2,
                 fields: [
-                    { name: 'langTheoryControl', placeholder: 'Control (50%)' },
-                    { name: 'langTheoryTd', placeholder: 'TD (50%)' }
+                    { name: 'langTheoryControl', placeholder: 'Control (60%)' },
+                    { name: 'langTheoryTd', placeholder: 'TD (40%)' }
                 ]
             }
         ]

@@ -1,6 +1,14 @@
 // common.js - Shared functions for all semester calculators
 
-// Initialize the global state object with semester-specific properties
+// ============================================================================
+// STATE MANAGEMENT
+// ============================================================================
+
+/**
+ * Initialize the global state object with semester-specific properties
+ * @param {Object} gradeFields - Object containing grade field names
+ * @returns {Object} Initial state object
+ */
 function initializeState(gradeFields) {
     return {
         grades: gradeFields,
@@ -9,27 +17,40 @@ function initializeState(gradeFields) {
             unit1: 0.00,
             unit2: 0.00,
             unit3: 0.00,
+            unit4: 0.00,
             modules: {}
         }
     };
 }
 
-// Input Handling
+// ============================================================================
+// INPUT HANDLING
+// ============================================================================
+
+/**
+ * Handle input changes with validation
+ * @param {Event} e - Input event
+ * @param {Object} state - Application state
+ * @param {Function} updateCalculations - Callback to update calculations
+ */
 function handleInput(e, state, updateCalculations) {
     const { name, value } = e.target;
 
+    // Allow empty input
     if (value === '') {
         state.grades[name] = '';
         updateCalculations();
         return;
     }
 
+    // Validate numeric input
     const numValue = parseFloat(value);
     if (isNaN(numValue)) {
         e.target.value = state.grades[name] || '';
         return;
     }
 
+    // Validate range (0-20)
     if (numValue < 0 || numValue > 20) {
         e.target.value = state.grades[name] || '';
         return;
@@ -39,6 +60,12 @@ function handleInput(e, state, updateCalculations) {
     updateCalculations();
 }
 
+/**
+ * Handle input blur with rounding
+ * @param {Event} e - Blur event
+ * @param {Object} state - Application state
+ * @param {Function} updateCalculations - Callback to update calculations
+ */
 function handleBlur(e, state, updateCalculations) {
     const { name, value } = e.target;
     if (value === '') return;
@@ -50,7 +77,29 @@ function handleBlur(e, state, updateCalculations) {
     updateCalculations();
 }
 
-// Generic Display Update
+/**
+ * Debounce function to limit calculation frequency
+ * @param {Function} func - Function to debounce
+ * @param {number} timeout - Delay in milliseconds
+ * @returns {Function} Debounced function
+ */
+function debounce(func, timeout = 300) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+}
+
+// ============================================================================
+// DISPLAY UPDATES
+// ============================================================================
+
+/**
+ * Update all display elements with current grades
+ * @param {Object} state - Application state
+ * @param {Object} moduleNames - Mapping of module display names to internal names
+ */
 function updateDisplay(state, moduleNames) {
     // Update module grades
     document.querySelectorAll('.module-grade').forEach(el => {
@@ -76,17 +125,29 @@ function updateDisplay(state, moduleNames) {
     }
 }
 
-// Module Creator
+// ============================================================================
+// UI COMPONENT CREATORS
+// ============================================================================
+
+/**
+ * Create a module element with inputs
+ * @param {Object} moduleConfig - Module configuration
+ * @param {Function} handleInputFn - Input handler function
+ * @param {Function} handleBlurFn - Blur handler function
+ * @returns {HTMLElement} Module element
+ */
 function createModule(moduleConfig, handleInputFn, handleBlurFn) {
     const moduleDiv = document.createElement('div');
     moduleDiv.className = 'module';
 
+    // Create header
     const header = document.createElement('div');
     header.className = 'module-header';
 
     const title = document.createElement('h3');
     title.textContent = moduleConfig.title;
 
+    // Add coefficient if exists
     if (moduleConfig.coefficient) {
         const coef = document.createElement('span');
         coef.className = 'coefficient';
@@ -97,6 +158,7 @@ function createModule(moduleConfig, handleInputFn, handleBlurFn) {
     header.prepend(title);
     moduleDiv.appendChild(header);
 
+    // Create input fields
     moduleConfig.fields.forEach(field => {
         const group = document.createElement('div');
         group.className = 'input-group';
@@ -105,9 +167,10 @@ function createModule(moduleConfig, handleInputFn, handleBlurFn) {
         input.type = 'number';
         input.min = 0;
         input.max = 20;
+        input.step = 0.01;
         input.name = field.name;
         input.placeholder = field.placeholder;
-        input.onwheel = () => input.blur();
+        input.onwheel = () => input.blur(); // Prevent scroll change
         input.addEventListener('input', handleInputFn);
         input.addEventListener('blur', handleBlurFn);
 
@@ -119,6 +182,7 @@ function createModule(moduleConfig, handleInputFn, handleBlurFn) {
         moduleDiv.appendChild(group);
     });
 
+    // Create grade display
     const gradeDisplay = document.createElement('div');
     gradeDisplay.className = 'module-grade';
     gradeDisplay.dataset.module = moduleConfig.title;
@@ -128,11 +192,18 @@ function createModule(moduleConfig, handleInputFn, handleBlurFn) {
     return moduleDiv;
 }
 
-// Unit Creator
+/**
+ * Create a unit section with modules
+ * @param {Object} unitConfig - Unit configuration
+ * @param {Function} handleInputFn - Input handler function
+ * @param {Function} handleBlurFn - Blur handler function
+ * @returns {HTMLElement} Unit element
+ */
 function createUnit(unitConfig, handleInputFn, handleBlurFn) {
     const unitDiv = document.createElement('div');
     unitDiv.className = 'unit-section';
 
+    // Create header
     const header = document.createElement('div');
     header.className = 'unit-header';
 
@@ -147,6 +218,7 @@ function createUnit(unitConfig, handleInputFn, handleBlurFn) {
     header.appendChild(grade);
     unitDiv.appendChild(header);
 
+    // Create modules grid
     const grid = document.createElement('div');
     grid.className = `grid ${unitConfig.gridClass}`;
 
@@ -158,25 +230,43 @@ function createUnit(unitConfig, handleInputFn, handleBlurFn) {
     return unitDiv;
 }
 
-// Save/Load System
-function setupSaveLoadSystem(state, semesterKey) {
+// ============================================================================
+// SAVE/LOAD SYSTEM
+// ============================================================================
+
+/**
+ * Setup save/load functionality with localStorage
+ * @param {Object} state - Application state
+ * @param {string} semesterKey - LocalStorage key for this semester
+ * @param {Function} updateCalculations - Callback to update calculations
+ * @returns {Object} Save/load utility functions
+ */
+function setupSaveLoadSystem(state, semesterKey, updateCalculations) {
     let savedGrades = JSON.parse(localStorage.getItem(semesterKey)) || [];
 
+    /**
+     * Save current grades to localStorage
+     */
     function saveCurrentGrades() {
         const saveName = prompt("Enter a name for this save:");
-        if (!saveName) return;
+        if (!saveName || saveName.trim() === '') return;
 
         const saveData = {
-            name: saveName,
-            grades: state.grades,
+            name: saveName.trim(),
+            grades: { ...state.grades }, // Create a copy
             timestamp: new Date().toLocaleString()
         };
 
         savedGrades.push(saveData);
         localStorage.setItem(semesterKey, JSON.stringify(savedGrades));
         updateSavesList();
+        alert('Grades saved successfully!');
     }
 
+    /**
+     * Load saved grades by index
+     * @param {number} saveIndex - Index of save to load
+     */
     function loadGrades(saveIndex) {
         const save = savedGrades[saveIndex];
         if (!save) return;
@@ -186,16 +276,31 @@ function setupSaveLoadSystem(state, semesterKey) {
             state.grades[key] = save.grades[key];
             const input = document.querySelector(`input[name="${key}"]`);
             if (input) {
-                input.value = save.grades[key];
+                input.value = save.grades[key] !== '' ? save.grades[key] : '';
             }
         });
 
-        updateCalculations(); // This needs to be passed in
+        updateCalculations();
         alert(`Loaded save: ${save.name}`);
     }
 
+    /**
+     * Delete a saved grade set
+     * @param {number} saveIndex - Index of save to delete
+     */
+    function deleteSave(saveIndex) {
+        savedGrades.splice(saveIndex, 1);
+        localStorage.setItem(semesterKey, JSON.stringify(savedGrades));
+        updateSavesList();
+    }
+
+    /**
+     * Update the saves list display
+     */
     function updateSavesList() {
         const savesList = document.getElementById('savesList');
+        if (!savesList) return;
+
         savesList.innerHTML = '<h4>Saved Grades:</h4>';
 
         if (savedGrades.length === 0) {
@@ -204,50 +309,90 @@ function setupSaveLoadSystem(state, semesterKey) {
         }
 
         savedGrades.forEach((save, index) => {
-            const button = document.createElement('button');
-            button.textContent = `${save.name} (${save.timestamp})`;
-            button.addEventListener('click', () => loadGrades(index));
-            savesList.appendChild(button);
+            const saveItem = document.createElement('div');
+            saveItem.className = 'save-item';
+
+            const loadButton = document.createElement('button');
+            loadButton.textContent = `${save.name} (${save.timestamp})`;
+            loadButton.className = 'load-save-button';
+            loadButton.addEventListener('click', () => loadGrades(index));
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '🗑️';
+            deleteButton.className = 'delete-button';
+            deleteButton.title = 'Delete this save';
+            deleteButton.addEventListener('click', () => {
+                if (confirm(`Delete save "${save.name}"?`)) {
+                    deleteSave(index);
+                }
+            });
+
+            saveItem.appendChild(loadButton);
+            saveItem.appendChild(deleteButton);
+            savesList.appendChild(saveItem);
         });
     }
 
-    function deleteSave(saveIndex) {
-        savedGrades.splice(saveIndex, 1);
-        localStorage.setItem(semesterKey, JSON.stringify(savedGrades));
-        updateSavesList();
+    /**
+     * Clear all inputs
+     */
+    function clearAllInputs() {
+        if (!confirm('Are you sure you want to clear all grades?')) return;
+
+        Object.keys(state.grades).forEach(key => {
+            state.grades[key] = '';
+            const input = document.querySelector(`input[name="${key}"]`);
+            if (input) {
+                input.value = '';
+            }
+        });
+
+        updateCalculations();
     }
 
-    // Event Listeners for Save/Load
-    document.getElementById('saveButton').addEventListener('click', saveCurrentGrades);
-    document.getElementById('loadButton').addEventListener('click', () => {
-        if (savedGrades.length === 0) {
-            alert("No saved grades found!");
-            return;
-        }
-        updateSavesList();
-    });
+    // Event Listeners
+    const saveButton = document.getElementById('saveButton');
+    const loadButton = document.getElementById('loadButton');
+    const clearButton = document.getElementById('clearButton');
 
-    // Initialize Saves List
+    if (saveButton) {
+        saveButton.addEventListener('click', saveCurrentGrades);
+    }
+
+    if (loadButton) {
+        loadButton.addEventListener('click', () => {
+            if (savedGrades.length === 0) {
+                alert("No saved grades found!");
+                return;
+            }
+            updateSavesList();
+        });
+    }
+
+    if (clearButton) {
+        clearButton.addEventListener('click', clearAllInputs);
+    }
+
+    // Initialize saves list
     updateSavesList();
 
-    // Return functions that might be needed elsewhere
+    // Return utility functions
     return {
         saveCurrentGrades,
         loadGrades,
         updateSavesList,
-        deleteSave
+        deleteSave,
+        clearAllInputs
     };
 }
 
-// Simple initialization for themes page
-if (document.body.classList.contains('themes')) {
-    // Initialize state for themes page (no grades needed)
-    const state = initializeState({});
-}
+// ============================================================================
+// THEME SYSTEM
+// ============================================================================
 
-// Theme switcher functionality
+// Theme definitions
 const themes = {
-    // Light white theme
+    // Basic themes
     'white': {
         '--bg-color': '#ffffff',
         '--text-color': '#000000',
@@ -257,8 +402,6 @@ const themes = {
         '--module-bg': '#ffffff',
         '--unit-bg': 'linear-gradient(to bottom right, #ffffff, #f5f5f5)'
     },
-
-    // Dark black theme
     'black': {
         '--bg-color': '#000000',
         '--text-color': '#ffffff',
@@ -345,6 +488,7 @@ const themes = {
         '--unit-bg': 'linear-gradient(to bottom right, #431e1d, #27161a)'
     },
 
+    // Special themes
     'dracula': {
         '--bg-color': '#282a36',
         '--text-color': '#f8f8f2',
@@ -354,8 +498,6 @@ const themes = {
         '--module-bg': '#383a59',
         '--unit-bg': 'linear-gradient(to bottom right, #21222c, #282a36)'
     },
-
-    // Lavender Theme
     'lavender-light': {
         '--bg-color': '#f5f0ff',
         '--text-color': '#4a4a6a',
@@ -374,8 +516,6 @@ const themes = {
         '--module-bg': '#2f2f4f',
         '--unit-bg': 'linear-gradient(to bottom right, #1a1a3a, #2a2a4a)'
     },
-
-    // Sepia Theme
     'sepia': {
         '--bg-color': '#3e2723',
         '--text-color': '#efebe9',
@@ -385,9 +525,6 @@ const themes = {
         '--module-bg': '#352f2f',
         '--unit-bg': 'linear-gradient(to bottom right, #2a1f1b, #3e2723)'
     },
-
-    // additional themes
-    // Matrix Theme
     'matrix-dark': {
         '--bg-color': '#000000',
         '--text-color': '#00ff00',
@@ -397,8 +534,6 @@ const themes = {
         '--module-bg': '#001a00',
         '--unit-bg': 'linear-gradient(to bottom right, #001500, #000f00)'
     },
-
-    // Cyberpunk Theme
     'cyberpunk-dark': {
         '--bg-color': '#0a0a2a',
         '--text-color': '#00ffff',
@@ -408,7 +543,6 @@ const themes = {
         '--module-bg': '#0f0f3a',
         '--unit-bg': 'linear-gradient(to bottom right, #0a0a2a, #1a1a4a)'
     },
-
     'add1': {
         '--bg-color': '#e6f3e6',
         '--text-color': '#0f360f',
@@ -418,7 +552,6 @@ const themes = {
         '--module-bg': '#ffffff',
         '--unit-bg': 'linear-gradient(to bottom right, #e0f8e0, #ffffff)'
     },
-
     'add2': {
         '--bg-color': '#f0f4f8',
         '--text-color': '#1a202c',
@@ -428,7 +561,6 @@ const themes = {
         '--module-bg': '#ffffff',
         '--unit-bg': 'linear-gradient(to bottom right, #e6e6fa, #ffffff)'
     },
-
     'add3': {
         '--bg-color': '#f8f8f2',
         '--text-color': '#282a36',
@@ -456,7 +588,6 @@ const themes = {
         '--module-bg': '#f8f8f8',
         '--unit-bg': 'linear-gradient(to bottom right, #f0f0f0, #ffffff)'
     },
-
     'add6': {
         '--bg-color': '#1a1a1a',
         '--text-color': '#ffffff',
@@ -475,9 +606,6 @@ const themes = {
         '--module-bg': '#2a2a2a',
         '--unit-bg': 'linear-gradient(to bottom right, #121212, #1e1e1e)'
     },
-
-    // add2
-    // Nature-Inspired Themes
     'desert-light': {
         '--bg-color': '#faf0e6',
         '--text-color': '#6d4c41',
@@ -496,7 +624,6 @@ const themes = {
         '--module-bg': '#352f2f',
         '--unit-bg': 'linear-gradient(to bottom right, #2a1f1b, #3e2723)'
     },
-
     'arctic-light': {
         '--bg-color': '#f0f8ff',
         '--text-color': '#1a5f7a',
@@ -515,7 +642,6 @@ const themes = {
         '--module-bg': '#0a1f23',
         '--unit-bg': 'linear-gradient(to bottom right, #0a1f23, #1a2f33)'
     },
-
     'tropical-light': {
         '--bg-color': '#f0fff4',
         '--text-color': '#2c7a2c',
@@ -534,7 +660,6 @@ const themes = {
         '--module-bg': '#0a2f11',
         '--unit-bg': 'linear-gradient(to bottom right, #052209, #0a2f11)'
     },
-    // Technology-Inspired Themes
     'retro-computer': {
         '--bg-color': '#001100',
         '--text-color': '#00ff00',
@@ -553,7 +678,6 @@ const themes = {
         '--module-bg': '#1f0f2f',
         '--unit-bg': 'linear-gradient(to bottom right, #1a0b2a, #2a1a3a)'
     },
-
     'minimalist-tech-light': {
         '--bg-color': '#ffffff',
         '--text-color': '#333333',
@@ -572,7 +696,6 @@ const themes = {
         '--module-bg': '#1a1a1a',
         '--unit-bg': 'linear-gradient(to bottom right, #121212, #1e1e1e)'
     },
-    // Unique Concept Themes
     'coffee-light': {
         '--bg-color': '#f4e4d4',
         '--text-color': '#5d4037',
@@ -591,7 +714,6 @@ const themes = {
         '--module-bg': '#352f2f',
         '--unit-bg': 'linear-gradient(to bottom right, #1a1c13, #2a1c13)'
     },
-
     'underwater-light': {
         '--bg-color': '#e6f2ff',
         '--text-color': '#00506a',
@@ -612,7 +734,10 @@ const themes = {
     }
 };
 
-// Apply theme
+/**
+ * Apply a theme by name
+ * @param {string} themeName - Name of theme to apply
+ */
 function applyTheme(themeName) {
     const theme = themes[themeName];
     if (!theme) return;
@@ -626,18 +751,20 @@ function applyTheme(themeName) {
     localStorage.setItem('preferredTheme', themeName);
 }
 
-// Initialize theme
+/**
+ * Initialize theme system
+ */
 function initTheme() {
     // Only create theme switcher on themes page
     if (document.body.classList.contains('themes')) {
         createThemeSwitcher();
     }
 
-    // Load saved theme or default to light (on all pages)
-    const savedTheme = localStorage.getItem('preferredTheme') || 'light';
+    // Load saved theme or default
+    const savedTheme = localStorage.getItem('preferredTheme') || 'add7';
     applyTheme(savedTheme);
 
-    // Set the active class on the button (only on themes page)
+    // Set active button on themes page
     if (document.body.classList.contains('themes')) {
         const activeButton = document.querySelector(`[data-theme="${savedTheme}"]`);
         if (activeButton) {
@@ -646,48 +773,48 @@ function initTheme() {
     }
 }
 
-// Create theme switcher UI (only called on themes page)
+/**
+ * Create theme switcher UI (only on themes page)
+ */
 function createThemeSwitcher() {
-    const themeCategories = [
-        {
-            themes: [
-                { id: 'white', name: 'White' },
-                { id: 'black', name: 'Black' },
-                { id: 'forest-light', name: 'Forest Light' },
-                { id: 'forest-dark', name: 'Forest Dark' },
-                { id: 'tropical-light', name: 'Tropical Light' },
-                { id: 'tropical-dark', name: 'Tropical Dark' },
-                { id: 'arctic-light', name: 'Arctic Light' },
-                { id: 'arctic-dark', name: 'Arctic Dark' },
-                { id: 'sunset-light', name: 'Sunset Light' },
-                { id: 'sunset-dark', name: 'Sunset Dark' },
-                { id: 'lavender-light', name: 'Lavender Light' },
-                { id: 'lavender-dark', name: 'Lavender Dark' },
-                { id: 'coffee-light', name: 'Coffee Light' },
-                { id: 'coffee-dark', name: 'Coffee Dark' },
-                { id: 'minimalist-tech-light', name: 'Minimalist Tech Light' },
-                { id: 'minimalist-tech-dark', name: 'Minimalist Tech Dark' },
-                { id: 'cyberpunk-dark', name: 'Cyberpunk' },
-                { id: 'dracula', name: 'Dracula' },
-                { id: 'matrix-dark', name: 'Matrix' },
-                { id: 'retro-computer', name: 'Retro Computer' },
-                { id: 'synthwave', name: 'Synthwave' },
-                { id: 'art-deco', name: 'Art Deco' },
-                { id: 'sepia', name: 'Sepia' },
-                { id: 'underwater-dark', name: 'Underwater' },
-                { id: 'ocean-dark', name: 'Ocean' },
-                { id: 'add1', name: 'Additional 1' },
-                { id: 'add2', name: 'Additional 2' },
-                { id: 'add3', name: 'Additional 3' },
-                { id: 'add4', name: 'Additional 4' },
-                { id: 'add5', name: 'Additional 5' },
-                { id: 'add6', name: 'Additional 6' },
-                { id: 'add7', name: 'Additional 7' },
-                { id: 'add8', name: 'Additional 8' },
-                { id: 'underwater-light', name: 'Additional 9' },
-                { id: 'ocean-light', name: 'Additional 10' },
-            ]
-        },
+    const themeList = [
+        { id: 'white', name: 'White' },
+        { id: 'black', name: 'Black' },
+        { id: 'forest-light', name: 'Forest Light' },
+        { id: 'forest-dark', name: 'Forest Dark' },
+        { id: 'tropical-light', name: 'Tropical Light' },
+        { id: 'tropical-dark', name: 'Tropical Dark' },
+        { id: 'arctic-light', name: 'Arctic Light' },
+        { id: 'arctic-dark', name: 'Arctic Dark' },
+        { id: 'sunset-light', name: 'Sunset Light' },
+        { id: 'sunset-dark', name: 'Sunset Dark' },
+        { id: 'lavender-light', name: 'Lavender Light' },
+        { id: 'lavender-dark', name: 'Lavender Dark' },
+        { id: 'coffee-light', name: 'Coffee Light' },
+        { id: 'coffee-dark', name: 'Coffee Dark' },
+        { id: 'minimalist-tech-light', name: 'Minimalist Tech Light' },
+        { id: 'minimalist-tech-dark', name: 'Minimalist Tech Dark' },
+        { id: 'cyberpunk-dark', name: 'Cyberpunk' },
+        { id: 'dracula', name: 'Dracula' },
+        { id: 'matrix-dark', name: 'Matrix' },
+        { id: 'retro-computer', name: 'Retro Computer' },
+        { id: 'synthwave', name: 'Synthwave' },
+        { id: 'art-deco', name: 'Art Deco' },
+        { id: 'sepia', name: 'Sepia' },
+        { id: 'underwater-dark', name: 'Underwater Dark' },
+        { id: 'underwater-light', name: 'Underwater Light' },
+        { id: 'ocean-dark', name: 'Ocean Dark' },
+        { id: 'ocean-light', name: 'Ocean Light' },
+        { id: 'desert-light', name: 'Desert Light' },
+        { id: 'desert-dark', name: 'Desert Dark' },
+        { id: 'add1', name: 'Additional 1' },
+        { id: 'add2', name: 'Additional 2' },
+        { id: 'add3', name: 'Additional 3' },
+        { id: 'add4', name: 'Additional 4' },
+        { id: 'add5', name: 'Additional 5' },
+        { id: 'add6', name: 'Additional 6' },
+        { id: 'add7', name: 'Additional 7' },
+        { id: 'add8', name: 'Additional 8' }
     ];
 
     // Create main theme section
@@ -699,176 +826,164 @@ function createThemeSwitcher() {
     heading.textContent = 'Theme Selector';
     themeSection.appendChild(heading);
 
-    // Create container for theme categories
-    const categoriesContainer = document.createElement('div');
-    categoriesContainer.className = 'theme-categories';
+    // Create themes grid
+    const themesGrid = document.createElement('div');
+    themesGrid.className = 'themes-grid';
 
-    // Render theme categories
-    themeCategories.forEach(category => {
-        // Category wrapper
-        const categoryWrapper = document.createElement('div');
-        categoryWrapper.className = 'theme-category';
+    // Create theme buttons
+    themeList.forEach(theme => {
+        const themeButton = document.createElement('button');
+        themeButton.className = 'theme-button';
+        themeButton.dataset.theme = theme.id;
 
-        // Category name
-        const categoryName = document.createElement('div');
-        categoryName.className = 'category-name';
-        categoryName.textContent = category.name;
-        categoryWrapper.appendChild(categoryName);
+        // Theme preview
+        const preview = document.createElement('div');
+        preview.className = 'theme-preview';
 
-        // Themes grid
-        const themesGrid = document.createElement('div');
-        themesGrid.className = 'themes-grid';
-
-        // Create theme buttons
-        category.themes.forEach(theme => {
-            const themeButton = document.createElement('button');
-            themeButton.className = 'theme-button';
-            themeButton.dataset.theme = theme.id;
-
-            // Theme preview
-            const preview = document.createElement('div');
-            preview.className = 'theme-preview';
-
-            const themeColors = themes[theme.id];
+        const themeColors = themes[theme.id];
+        if (themeColors) {
             preview.style.setProperty('--bg-color', themeColors['--bg-color']);
             preview.style.setProperty('--primary-color', themeColors['--primary']);
             preview.style.setProperty('--text-color', themeColors['--text-color']);
+        }
 
-            // Theme name
-            const themeName = document.createElement('span');
-            themeName.textContent = theme.name;
+        // Theme name
+        const themeName = document.createElement('span');
+        themeName.textContent = theme.name;
 
-            themeButton.appendChild(preview);
-            themeButton.appendChild(themeName);
+        themeButton.appendChild(preview);
+        themeButton.appendChild(themeName);
 
-            // Click event
-            themeButton.addEventListener('click', () => {
-                // Remove active state from all buttons
-                document.querySelectorAll('.theme-button').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-
-                // Add active state to current button
-                themeButton.classList.add('active');
-
-                // Apply theme
-                applyTheme(theme.id);
+        // Click event
+        themeButton.addEventListener('click', () => {
+            // Remove active state from all buttons
+            document.querySelectorAll('.theme-button').forEach(btn => {
+                btn.classList.remove('active');
             });
 
-            themesGrid.appendChild(themeButton);
+            // Add active state to current button
+            themeButton.classList.add('active');
+
+            // Apply theme
+            applyTheme(theme.id);
         });
 
-        categoryWrapper.appendChild(themesGrid);
-        categoriesContainer.appendChild(categoryWrapper);
+        themesGrid.appendChild(themeButton);
     });
 
-    themeSection.appendChild(categoriesContainer);
+    themeSection.appendChild(themesGrid);
 
     // Inject styles
-    const styles = `
-    <style>
-    .theme-selector {
-        background-color: var(--module-bg);
-        border-radius: 12px;
-        padding: 20px;
-        margin: 20px 0;
-    }
+    const styles = document.createElement('style');
+    styles.textContent = `
+        .theme-selector {
+            background-color: var(--module-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
 
-    .theme-selector h3 {
-        color: var(--primary);
-        margin-bottom: 20px;
-        text-align: center;
-    }
+        .theme-selector h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
 
-    .theme-categories {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
+        .themes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+        }
 
-    .theme-category {
-        background-color: var(--input-bg);
-        border-radius: 10px;
-        padding: 15px;
-    }
+        .theme-button {
+            background: var(--input-bg);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-    .category-name {
-        font-weight: bold;
-        color: var(--primary);
-        margin-bottom: 15px;
-    }
+        .theme-button:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
 
-    .themes-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 15px;
-    }
+        .theme-button.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
 
-    .theme-button {
-        background: none;
-        border: 2px solid transparent;
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 10px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
+        .theme-preview {
+            width: 80px;
+            height: 60px;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 8px;
+        }
 
-    .theme-button:hover {
-        border-color: var(--primary);
-    }
+        .theme-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg, 
+                var(--bg-color) 0%, 
+                var(--bg-color) 50%, 
+                var(--primary-color) 50%, 
+                var(--primary-color) 100%
+            );
+        }
 
-    .theme-button.active {
-        border-color: var(--primary);
-        box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
+        .theme-preview::after {
+            content: 'Aa';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-color);
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 2px rgba(0,0,0,0.5);
+        }
 
-    .theme-preview {
-        width: 80px;
-        height: 60px;
-        border-radius: 6px;
-        overflow: hidden;
-        position: relative;
-        margin-bottom: 8px;
-    }
+        .theme-button span {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            color: var(--text-color);
+            text-align: center;
+        }
 
-    .theme-preview::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(
-            45deg, 
-            var(--bg-color) 0%, 
-            var(--bg-color) 50%, 
-            var(--primary-color) 50%, 
-            var(--primary-color) 100%
-        );
-    }
+        .save-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
 
-    .theme-preview::after {
-        content: 'Aa';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: var(--text-color);
-        font-size: 20px;
-        font-weight: bold;
-    }
+        .save-item .load-save-button {
+            flex: 1;
+        }
 
-    .theme-button span {
-        font-size: 0.8rem;
-        margin-top: 5px;
-        color: var(--text-color);
-    }
-    </style>`;
+        .save-item .delete-button {
+            flex: 0 0 auto;
+            min-width: 40px;
+            padding: 8px;
+            background-color: #dc2626;
+        }
 
-    document.head.insertAdjacentHTML('beforeend', styles);
+        .save-item .delete-button:hover {
+            background-color: #b91c1c;
+        }
+    `;
+    document.head.appendChild(styles);
 
     // Insert theme section
     const container = document.querySelector('.container');
@@ -883,49 +998,13 @@ function createThemeSwitcher() {
     }
 }
 
-// Modify initTheme to handle theme switcher creation
-function initTheme() {
-    // Only create theme switcher on themes page
-    if (document.body.classList.contains('themes')) {
-        createThemeSwitcher();
-    }
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
 
-    // Load saved theme or default to light
-    const savedTheme = localStorage.getItem('preferredTheme') || 'light';
-    applyTheme(savedTheme);
-
-    // Set active button on themes page
-    if (document.body.classList.contains('themes')) {
-        const activeButton = document.querySelector(`[data-theme="${savedTheme}"]`);
-        if (activeButton) {
-            activeButton.classList.add('active');
-        }
-    }
-}
-
-// Apply theme immediately before DOM is fully loaded to prevent flash
-(function () {
-    const savedTheme = localStorage.getItem('preferredTheme');
-    if (savedTheme && themes[savedTheme]) {
-        applyTheme(savedTheme);
-    }
-})();
-
-// Initialize theme UI on page load
-document.addEventListener('DOMContentLoaded', initTheme);
-
-// Debounce input to reduce calculation frequency
-function debounce(func, timeout = 300) {
-    let timer;
-    return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => { func.apply(this, args); }, timeout);
-    };
-}
-
-// Modify handleInput to use debounce
-const debouncedHandleInput = debounce(handleInput, 150);
-
+/**
+ * Enhance touch interaction for mobile devices
+ */
 function enhanceTouchInteraction() {
     // Prevent default wheel scroll on number inputs
     document.querySelectorAll('input[type="number"]').forEach(input => {
@@ -933,5 +1012,29 @@ function enhanceTouchInteraction() {
     });
 
     // Add tap highlight for better touch feedback
-    document.body.style.webkitTapHighlightColor = 'rgba(0,0,0,0.2)';
+    if (document.body.style.webkitTapHighlightColor !== undefined) {
+        document.body.style.webkitTapHighlightColor = 'rgba(0,0,0,0.2)';
+    }
 }
+
+// ============================================================================
+// INITIALIZATION
+// ============================================================================
+
+/**
+ * Apply theme immediately before DOM is fully loaded to prevent flash
+ */
+(function () {
+    const savedTheme = localStorage.getItem('preferredTheme');
+    if (savedTheme && themes[savedTheme]) {
+        applyTheme(savedTheme);
+    }
+})();
+
+/**
+ * Initialize theme UI on page load
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+    enhanceTouchInteraction();
+});

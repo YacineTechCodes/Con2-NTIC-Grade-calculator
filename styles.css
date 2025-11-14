@@ -453,3 +453,23 @@ a,
     opacity: 0.7;
     font-size: 0.875rem;
 }
+
+.save-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.save-item button {
+    flex: 1;
+}
+
+.delete-button {
+    flex: 0 0 auto;
+    background-color: #dc2626;
+    padding: 8px 12px;
+}
+
+.delete-button:hover {
+    background-color: #b91c1c;
+}

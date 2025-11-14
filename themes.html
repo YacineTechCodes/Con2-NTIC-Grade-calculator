@@ -23,55 +23,6 @@
             // Get theme from localStorage
             const savedTheme = localStorage.getItem('preferredTheme');
 
-            // Define themes (must match the ones in your main script)
-            const themes = {
-                light: {
-                    '--bg-color': '#ffffff',
-                    '--text-color': '#1a1a1a',
-                    '--primary': '#4f46e5',
-                    '--border-color': '#e0e7ff',
-                    '--input-bg': '#f8fafc',
-                    '--module-bg': '#ffffff',
-                    '--unit-bg': 'linear-gradient(to bottom right, #eef2ff, #ffffff)'
-                },
-                dark: {
-                    '--bg-color': '#1a1a1a',
-                    '--text-color': '#f8fafc',
-                    '--primary': '#818cf8',
-                    '--border-color': '#374151',
-                    '--input-bg': '#2a2a2a',
-                    '--module-bg': '#222222',
-                    '--unit-bg': 'linear-gradient(to bottom right, #1f2937, #111827)'
-                },
-                forest: {
-                    '--bg-color': '#f8faf8',
-                    '--text-color': '#1e3a29',
-                    '--primary': '#2d6a4f',
-                    '--border-color': '#d8f3dc',
-                    '--input-bg': '#f1f8f2',
-                    '--module-bg': '#ffffff',
-                    '--unit-bg': 'linear-gradient(to bottom right, #e9f5ec, #ffffff)'
-                },
-                ocean: {
-                    '--bg-color': '#f0f4f8',
-                    '--text-color': '#0d3b66',
-                    '--primary': '#1e6091',
-                    '--border-color': '#caf0f8',
-                    '--input-bg': '#ecf5fc',
-                    '--module-bg': '#ffffff',
-                    '--unit-bg': 'linear-gradient(to bottom right, #e0f7fa, #ffffff)'
-                },
-                sunset: {
-                    '--bg-color': '#fff8f3',
-                    '--text-color': '#6a3d2b',
-                    '--primary': '#e76f51',
-                    '--border-color': '#ffefeb',
-                    '--input-bg': '#fff8f5',
-                    '--module-bg': '#ffffff',
-                    '--unit-bg': 'linear-gradient(to bottom right, #ffeeeb, #ffffff)'
-                }
-            };
-
             // Apply theme if saved
             if (savedTheme && themes[savedTheme]) {
                 Object.entries(themes[savedTheme]).forEach(([property, value]) => {
@@ -95,7 +46,8 @@
 
         <footer class="footer">
             <p>MI Grade Calculator &copy; 2025 | For University Constantine 2 NTIC students | Student-created tool</p>
-            <p class="contact-info">Contact: <a href="https://t.me/YacineTechCodes" target="_blank" class="telegram-link">
+            <p class="contact-info">Contact: <a href="https://t.me/YacineTechCodes" target="_blank"
+                    class="telegram-link">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path

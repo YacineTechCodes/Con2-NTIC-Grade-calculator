@@ -2,51 +2,38 @@
 
 // Initialize state for Semester 2
 const state = initializeState({
-    // Unit 1
-    analysisControl: '', analysisTd: '',
-    algebraControl: '', algebraTd: '',
-    probStatsControl: '', probStatsTd: '',
-
-    // Unit 2
-    pdsControl: '', pdsTd: '', pdsTp: '',
-    machineControl: '', machineTd: '',
-
-    // Unit 3
-    ictControl: '',
-    oopControl: '', oopTp: '',
-
-    // Unit 4
-    geControl: '', geTd: '',
-    historyControl: ''
+    ana2Control: '', ana2Td: '',
+    alg2Control: '', alg2Td: '',
+    asd2Control: '', asd2Td: '', asd2Tp: '',
+    sm2Control: '', sm2Td: '',
+    lmControl: '', lmTd: '',
+    aiControl: '', aiTp: '',
+    electControl: '', electTd: ''
 });
-
-// Module name mapping
-const moduleNames = {
-    'Analysis': 'Analysis',
-    'Algebra': 'Algebra',
-    'Probability & Statistics': 'ProbabilityStatistics',
-    'Programming & Data Structures': 'ProgrammingDataStructures',
-    'Machine Structure': 'MachineStructure',
-    'ICT': 'ICT',
-    'Intro to OOP': 'IntroOOP',
-    'General Electricity': 'GeneralElectricity',
-    'History of Sciences': 'HistoryScience'
-};
 
 // Calculation Formulas
 const formulas = {
-    Analysis: values => 0.66 * values.analysisControl + 0.34 * values.analysisTd,
-    Algebra: values => 0.6 * values.algebraControl + 0.4 * values.algebraTd,
-    ProbabilityStatistics: values => 0.67 * values.probStatsControl + 0.33 * values.probStatsTd,
-    ProgrammingDataStructures: values => 0.68 * values.pdsControl + 0.16 * values.pdsTd + 0.16 * values.pdsTp,
-    MachineStructure: values => 0.66 * values.machineControl + 0.34 * values.machineTd,
-    ICT: values => 1.00 * values.ictControl,
-    IntroOOP: values => 0.60 * values.oopControl + 0.40 * values.oopTp,
-    GeneralElectricity: values => 0.80 * values.geControl + 0.20 * values.geTd,
-    HistoryScience: values => 1.00 * values.historyControl
+    'Analysis 2': values => 0.60 * values.ana2Control + 0.40 * values.ana2Td,
+    'Algebra 2': values => 0.60 * values.alg2Control + 0.40 * values.alg2Td,
+    'Algorithms and Data Structure 2': values => 0.60 * values.asd2Control + 0.40 * values.asd2Tp,
+    'Machine Structure 2': values => 0.60 * values.sm2Control + 0.40 * values.sm2Td,
+    'Mathematical Logic': values => 0.60 * values.lmControl + 0.40 * values.lmTd,
+    'Introduction to AI': values => 0.60 * values.aiControl + 0.40 * values.aiTp,
+    'Electronics': values => 0.60 * values.electControl + 0.40 * values.electTd
 };
 
-// Automatic Calculation
+// Module name mapping
+const moduleNames = {
+    'Analysis 2': 'Analysis 2',
+    'Algebra 2': 'Algebra 2',
+    'Algorithms and Data Structure 2': 'Algorithms and Data Structure 2',
+    'Machine Structure 2': 'Machine Structure 2',
+    'Mathematical Logic': 'Mathematical Logic',
+    'Introduction to AI': 'Introduction to AI',
+    'Electronics': 'Electronics'
+};
+
+// Update calculations for Semester 2
 function updateCalculations() {
     const numbers = Object.fromEntries(
         Object.entries(state.grades).map(([key, value]) => [key, parseFloat(value) || 0])
@@ -54,116 +41,102 @@ function updateCalculations() {
 
     // Module grades
     state.results.modules = {
-        Analysis: formulas.Analysis(numbers),
-        Algebra: formulas.Algebra(numbers),
-        ProbabilityStatistics: formulas.ProbabilityStatistics(numbers),
-        ProgrammingDataStructures: formulas.ProgrammingDataStructures(numbers),
-        MachineStructure: formulas.MachineStructure(numbers),
-        ICT: formulas.ICT(numbers),
-        IntroOOP: formulas.IntroOOP(numbers),
-        GeneralElectricity: formulas.GeneralElectricity(numbers),
-        HistoryScience: formulas.HistoryScience(numbers)
+        'Analysis 2': formulas['Analysis 2'](numbers),
+        'Algebra 2': formulas['Algebra 2'](numbers),
+        'Algorithms and Data Structure 2': formulas['Algorithms and Data Structure 2'](numbers),
+        'Machine Structure 2': formulas['Machine Structure 2'](numbers),
+        'Mathematical Logic': formulas['Mathematical Logic'](numbers),
+        'Introduction to AI': formulas['Introduction to AI'](numbers),
+        'Electronics': formulas['Electronics'](numbers)
     };
 
-    // Unit averages
+    // Calculate unit grades separately
+    // Unit 1 Fundamental (Mathematics): Analysis 2(coef 4) + Algebra 2(coef 2)
     state.results.unit1 = (
-        state.results.modules.Analysis * 2 +
-        state.results.modules.Algebra * 2 +
-        state.results.modules.ProbabilityStatistics * 1
-    ) / 5;
+        state.results.modules['Analysis 2'] * 4 +
+        state.results.modules['Algebra 2'] * 2
+    ) / 6;
 
+    // Unit 2 Fundamental (Computer Science): Algorithms and Data Structure 2(coef 5) + Machine Structure 2(coef 3)
     state.results.unit2 = (
-        state.results.modules.ProgrammingDataStructures * 3 +
-        state.results.modules.MachineStructure * 2
-    ) / 5;
+        state.results.modules['Algorithms and Data Structure 2'] * 5 +
+        state.results.modules['Machine Structure 2'] * 3
+    ) / 8;
 
-    state.results.unit3 = (
-        state.results.modules.ICT * 2 +
-        state.results.modules.IntroOOP * 1
-    ) / 3;
+    // Unit 3 Methodological: Mathematical Logic(coef 1)
+    state.results.unit3 = state.results.modules['Mathematical Logic'];
 
-    state.results.unit4 = (
-        state.results.modules.GeneralElectricity * 2 +
-        state.results.modules.HistoryScience * 1
-    ) / 3;
+    // Unit 4 Transversal: Introduction to AI(coef 1)
+    state.results.unit4 = state.results.modules['Introduction to AI'];
 
-    // Final result (total weighted average)
+    // Unit 5 Discovery: Electronics(coef 2)
+    state.results.unit5 = state.results.modules['Electronics'];
+
+    // Calculate final result with credits: Analysis 2(6) + Algebra 2(5) + Algorithms and Data Structure 2(7) + Machine Structure 2(5) + Mathematical Logic(2) + Introduction to AI(2) + Electronics(4)
     state.results.finalResult = (
-        state.results.modules.Analysis * 2 +
-        state.results.modules.Algebra * 2 +
-        state.results.modules.ProbabilityStatistics * 1 +
-        state.results.modules.ProgrammingDataStructures * 3 +
-        state.results.modules.MachineStructure * 2 +
-        state.results.modules.ICT * 2 +
-        state.results.modules.IntroOOP * 1 +
-        state.results.modules.GeneralElectricity * 2 +
-        state.results.modules.HistoryScience * 1
-    ) / 16; // Total coefficients = 16
+        state.results.modules['Analysis 2'] * 6 +
+        state.results.modules['Algebra 2'] * 5 +
+        state.results.modules['Algorithms and Data Structure 2'] * 7 +
+        state.results.modules['Machine Structure 2'] * 5 +
+        state.results.modules['Mathematical Logic'] * 2 +
+        state.results.modules['Introduction to AI'] * 2 +
+        state.results.modules['Electronics'] * 4
+    ) / 31;
 
     updateDisplay(state, moduleNames);
 }
 
 // Initialize the page
 function init() {
-
     // Create input handlers with specific state
     const handleInputFn = (e) => handleInput(e, state, updateCalculations);
     const handleBlurFn = (e) => handleBlur(e, state, updateCalculations);
 
     const unitSections = document.getElementById('unitSections');
 
-    // Unit 1: Fundamental
+    // Unit 1: Fundamental (Mathematics)
     unitSections.appendChild(createUnit({
-        title: 'Unit 1: Fundamental',
-        gridClass: 'md:grid-cols-3',
+        title: 'Unit: Fundamental (Mathematics)',
+        gridClass: 'md:grid-cols-2',
         modules: [
             {
-                title: 'Analysis',
-                coefficient: 2,
+                title: 'Analysis 2',
+                coefficient: 4,
                 fields: [
-                    { name: 'analysisControl', placeholder: 'Control (66%)' },
-                    { name: 'analysisTd', placeholder: 'TD (34%)' }
+                    { name: 'ana2Td', placeholder: 'TD (40%)' },
+                    { name: 'ana2Control', placeholder: 'Control (60%)' }
                 ]
             },
             {
-                title: 'Algebra',
+                title: 'Algebra 2',
                 coefficient: 2,
                 fields: [
-                    { name: 'algebraControl', placeholder: 'Control (60%)' },
-                    { name: 'algebraTd', placeholder: 'TD (40%)' }
-                ]
-            },
-            {
-                title: 'Probability & Statistics',
-                coefficient: 1,
-                fields: [
-                    { name: 'probStatsControl', placeholder: 'Control (67%)' },
-                    { name: 'probStatsTd', placeholder: 'TD (33%)' }
+                    { name: 'alg2Td', placeholder: 'TD (40%)' },
+                    { name: 'alg2Control', placeholder: 'Control (60%)' }
                 ]
             }
         ]
     }, handleInputFn, handleBlurFn));
 
-    // Unit 2: Fundamental
+    // Unit 2: Fundamental (Computer Science)
     unitSections.appendChild(createUnit({
-        title: 'Unit 2: Fundamental',
+        title: 'Unit: Fundamental (Computer Science)',
         gridClass: 'md:grid-cols-2',
         modules: [
             {
-                title: 'Programming & Data Structures',
-                coefficient: 3,
+                title: 'Algorithms and Data Structure 2',
+                coefficient: 5,
                 fields: [
-                    { name: 'pdsControl', placeholder: 'Control (68%)' },
-                    { name: 'pdsTd', placeholder: 'TD (16%)' },
-                    { name: 'pdsTp', placeholder: 'TP (16%)' }
+                    { name: 'asd2Tp', placeholder: 'TP (40%)' },
+                    { name: 'asd2Control', placeholder: 'Control (60%)' }
                 ]
             },
             {
-                title: 'Machine Structure',
-                coefficient: 2,
+                title: 'Machine Structure 2',
+                coefficient: 3,
                 fields: [
-                    { name: 'machineControl', placeholder: 'Control (66%)' },
-                    { name: 'machineTd', placeholder: 'TD (34%)' }
+                    { name: 'sm2Td', placeholder: 'TD (40%)' },
+                    { name: 'sm2Control', placeholder: 'Control (60%)' }
                 ]
             }
         ]
@@ -171,22 +144,15 @@ function init() {
 
     // Unit 3: Methodological
     unitSections.appendChild(createUnit({
-        title: 'Unit 3: Methodological',
-        gridClass: 'md:grid-cols-2',
+        title: 'Unit: Methodological',
+        gridClass: 'grid-cols-1',
         modules: [
             {
-                title: 'ICT',
-                coefficient: 2,
-                fields: [
-                    { name: 'ictControl', placeholder: 'Control (100%)' }
-                ]
-            },
-            {
-                title: 'Intro to OOP',
+                title: 'Mathematical Logic',
                 coefficient: 1,
                 fields: [
-                    { name: 'oopControl', placeholder: 'Control (60%)' },
-                    { name: 'oopTp', placeholder: 'TP (40%)' }
+                    { name: 'lmTd', placeholder: 'TD (40%)' },
+                    { name: 'lmControl', placeholder: 'Control (60%)' }
                 ]
             }
         ]
@@ -194,29 +160,38 @@ function init() {
 
     // Unit 4: Transversal
     unitSections.appendChild(createUnit({
-        title: 'Unit 4: Transversal',
-        gridClass: 'md:grid-cols-2',
+        title: 'Unit: Transversal',
+        gridClass: 'grid-cols-1',
         modules: [
             {
-                title: 'General Electricity',
-                coefficient: 2,
-                fields: [
-                    { name: 'geControl', placeholder: 'Control (80%)' },
-                    { name: 'geTd', placeholder: 'TD (20%)' }
-                ]
-            },
-            {
-                title: 'History of Sciences',
+                title: 'Introduction to AI',
                 coefficient: 1,
                 fields: [
-                    { name: 'historyControl', placeholder: 'Control (100%)' }
+                    { name: 'aiTp', placeholder: 'TP (40%)' },
+                    { name: 'aiControl', placeholder: 'Control (60%)' }
+                ]
+            }
+        ]
+    }, handleInputFn, handleBlurFn));
+
+    // Unit 5: Discovery
+    unitSections.appendChild(createUnit({
+        title: 'Unit: Discovery',
+        gridClass: 'grid-cols-1',
+        modules: [
+            {
+                title: 'Electronics',
+                coefficient: 2,
+                fields: [
+                    { name: 'electTd', placeholder: 'TD (40%)' },
+                    { name: 'electControl', placeholder: 'Control (60%)' }
                 ]
             }
         ]
     }, handleInputFn, handleBlurFn));
 
     // Setup save/load system
-    setupSaveLoadSystem(state, 'savedGradesSemester2');
+    setupSaveLoadSystem(state, 'savedGradesSemester2new', updateCalculations);
 }
 
 // Initialize the page

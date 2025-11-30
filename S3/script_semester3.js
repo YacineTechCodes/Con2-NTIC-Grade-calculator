@@ -8,7 +8,7 @@ const state = initializeState({
     mathLogicControl: '', mathLogicTd: '',
 
     // Unit 2
-    oopControl: '', oopTd: '', oopTp: '',
+    oopControl: '', oopTp: '',
     infoSysControl: '', infoSysTd: '',
     langTheoryControl: '', langTheoryTd: '',
 
@@ -21,7 +21,7 @@ const formulas = {
     AlgorithmsDataStructures: values => 0.60 * values.algoDSControl + 0.20 * values.algoDSTd + 0.20 * values.algoDSTp,
     ComputerArchitecture: values => 0.67 * values.compArchControl + 0.33 * values.compArchTp,
     MathematicalLogic: values => 0.67 * values.mathLogicControl + 0.33 * values.mathLogicTd,
-    ObjectOrientedProgramming: values => 0.67 * values.oopControl + 0.165 * values.oopTd + 0.165 * values.oopTp,
+    ObjectOrientedProgramming: values => 0.67 * values.oopControl + 0.33 * values.oopTp,
     InformationSystems: values => 0.60 * values.infoSysControl + 0.40 * values.infoSysTd,
     LanguageTheory: values => 0.60 * values.langTheoryControl + 0.40 * values.langTheoryTd,
     English2: values => 1.00 * values.english2Control
@@ -136,8 +136,7 @@ function init() {
                 coefficient: 3,
                 fields: [
                     { name: 'oopControl', placeholder: 'Control (67%)' },
-                    { name: 'oopTd', placeholder: 'TD (16.5%)' },
-                    { name: 'oopTp', placeholder: 'TP (16.5%)' }
+                    { name: 'oopTp', placeholder: 'TP (33%)' }
                 ]
             },
             {

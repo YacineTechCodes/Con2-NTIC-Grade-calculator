@@ -271,39 +271,46 @@ function setupSaveLoadSystem(state, semesterKey, updateCalculations) {
         const save = savedGrades[saveIndex];
         if (!save) return;
 
-        // First, clear all existing grades in inputs and trigger update
+        // Step 1: Clear all existing grades in state and inputs
         Object.keys(state.grades).forEach(key => {
+            state.grades[key] = '';
             const input = document.querySelector(`input[name="${key}"]`);
             if (input) {
                 input.value = '';
-                input.dispatchEvent(new Event('input', { bubbles: true }));
             }
         });
 
-        // Update state with saved grades by simulating input
+        // Step 2: Load saved values directly into state and inputs
         Object.keys(save.grades).forEach(key => {
-            // Only update if the key still exists in the current version of the app
-            if (state.grades.hasOwnProperty(key)) {
+            if (key in state.grades) {
+                const savedValue = save.grades[key];
+                // Update state
+                state.grades[key] = savedValue;
+                // Update input
                 const input = document.querySelector(`input[name="${key}"]`);
                 if (input) {
-                    // Set value
-                    input.value = save.grades[key] !== '' ? save.grades[key] : '';
-                    // Dispatch input event to trigger handleInput -> updateCalculations
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                    input.value = savedValue !== '' ? savedValue : '';
                 }
             }
         });
 
-        // Force calculation update just in case
+        // Step 3: Force immediate calculation update
         updateCalculations();
+
+        // Step 4: Use requestAnimationFrame to ensure DOM renders, then update again
+        requestAnimationFrame(() => {
+            updateCalculations();
+        });
 
         // Provide feedback without blocking alert
         const loadButton = document.getElementById('loadButton');
-        const originalText = loadButton.textContent;
-        loadButton.textContent = 'Loaded!';
-        setTimeout(() => {
-            loadButton.textContent = originalText;
-        }, 2000);
+        if (loadButton) {
+            const originalText = loadButton.textContent;
+            loadButton.textContent = 'Loaded!';
+            setTimeout(() => {
+                loadButton.textContent = originalText;
+            }, 2000);
+        }
     }
 
     /**

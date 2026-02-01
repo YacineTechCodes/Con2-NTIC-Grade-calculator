@@ -174,7 +174,7 @@ function init() {
     }, handleInputFn, handleBlurFn));
 
     // Setup save/load system
-    setupSaveLoadSystem(state, 'savedGradesSemester3');
+    setupSaveLoadSystem(state, 'savedGradesSemester3', updateCalculations);
 }
 
 // Initialize the page

@@ -101,6 +101,8 @@ function debounce(func, timeout = 300) {
  * @param {Object} moduleNames - Mapping of module display names to internal names
  */
 function updateDisplay(state, moduleNames) {
+    console.log('[DEBUG] updateDisplay called, state.results:', JSON.stringify(state.results));
+
     // Update module grades
     document.querySelectorAll('.module-grade').forEach(el => {
         const moduleName = el.dataset.module;
@@ -120,8 +122,11 @@ function updateDisplay(state, moduleNames) {
 
     // Update final result
     const finalResultElement = document.getElementById('finalResult');
+    console.log('[DEBUG] finalResultElement:', finalResultElement);
+    console.log('[DEBUG] state.results.finalResult:', state.results.finalResult);
     if (finalResultElement) {
         finalResultElement.textContent = `Final Result: ${state.results.finalResult.toFixed(2)}`;
+        console.log('[DEBUG] Set finalResult textContent to:', finalResultElement.textContent);
     }
 }
 
@@ -268,8 +273,10 @@ function setupSaveLoadSystem(state, semesterKey, updateCalculations) {
      * @param {number} saveIndex - Index of save to load
      */
     function loadGrades(saveIndex) {
+        console.log('[DEBUG] loadGrades called with index:', saveIndex);
         const save = savedGrades[saveIndex];
         if (!save) return;
+        console.log('[DEBUG] save.grades:', JSON.stringify(save.grades));
 
         // Step 1: Clear all existing grades in state and inputs
         Object.keys(state.grades).forEach(key => {
@@ -279,6 +286,7 @@ function setupSaveLoadSystem(state, semesterKey, updateCalculations) {
                 input.value = '';
             }
         });
+        console.log('[DEBUG] After clearing, state.grades:', JSON.stringify(state.grades));
 
         // Step 2: Load saved values directly into state and inputs
         Object.keys(save.grades).forEach(key => {
@@ -293,12 +301,15 @@ function setupSaveLoadSystem(state, semesterKey, updateCalculations) {
                 }
             }
         });
+        console.log('[DEBUG] After loading, state.grades:', JSON.stringify(state.grades));
 
         // Step 3: Force immediate calculation update
+        console.log('[DEBUG] Calling updateCalculations (first time)');
         updateCalculations();
 
         // Step 4: Use requestAnimationFrame to ensure DOM renders, then update again
         requestAnimationFrame(() => {
+            console.log('[DEBUG] Calling updateCalculations (second time via rAF)');
             updateCalculations();
         });
 

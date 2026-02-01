@@ -271,17 +271,38 @@ function setupSaveLoadSystem(state, semesterKey, updateCalculations) {
         const save = savedGrades[saveIndex];
         if (!save) return;
 
-        // Update state with saved grades
-        Object.keys(save.grades).forEach(key => {
-            state.grades[key] = save.grades[key];
+        // First, clear all existing grades in state and inputs
+        // This ensures no leftover data from current session mixes with the save
+        Object.keys(state.grades).forEach(key => {
+            state.grades[key] = '';
             const input = document.querySelector(`input[name="${key}"]`);
             if (input) {
-                input.value = save.grades[key] !== '' ? save.grades[key] : '';
+                input.value = '';
             }
         });
 
+        // Update state with saved grades
+        Object.keys(save.grades).forEach(key => {
+            // Only update if the key still exists in the current version of the app
+            if (state.grades.hasOwnProperty(key)) {
+                state.grades[key] = save.grades[key];
+                const input = document.querySelector(`input[name="${key}"]`);
+                if (input) {
+                    input.value = save.grades[key] !== '' ? save.grades[key] : '';
+                }
+            }
+        });
+
+        // Force calculation update
         updateCalculations();
-        alert(`Loaded save: ${save.name}`);
+
+        // Provide feedback without blocking alert
+        const loadButton = document.getElementById('loadButton');
+        const originalText = loadButton.textContent;
+        loadButton.textContent = 'Loaded!';
+        setTimeout(() => {
+            loadButton.textContent = originalText;
+        }, 2000);
     }
 
     /**

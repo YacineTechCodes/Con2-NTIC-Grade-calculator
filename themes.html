@@ -17,6 +17,7 @@
 
         gtag('config', 'G-16HX7EDPMW');
     </script>
+    <script src="themes.js"></script>
     <script>
         // Immediately apply saved theme to prevent flash of unstyled content
         (function () {
@@ -24,7 +25,7 @@
             const savedTheme = localStorage.getItem('preferredTheme');
 
             // Apply theme if saved
-            if (savedTheme && themes[savedTheme]) {
+            if (savedTheme && window.themes && window.themes[savedTheme]) {
                 Object.entries(themes[savedTheme]).forEach(([property, value]) => {
                     document.documentElement.style.setProperty(property, value);
                 });

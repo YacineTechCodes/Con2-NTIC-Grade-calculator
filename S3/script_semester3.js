@@ -19,9 +19,9 @@ const state = initializeState({
 // Calculation Formulas
 const formulas = {
     AlgorithmsDataStructures: values => 0.60 * values.algoDSControl + 0.40 * values.algoDSTdTp,
-    ComputerArchitecture: values => (values.compArchControl * 2 + values.compArchTp) / 3,
+    ComputerArchitecture: values => 0.66 * values.compArchControl + 0.34 * values.compArchTp,
     MathematicalLogic: values => 0.67 * values.mathLogicControl + 0.33 * values.mathLogicTd,
-    ObjectOrientedProgramming: values => (values.oopControl * 2 + values.oopTp) / 3,
+    ObjectOrientedProgramming: values => 0.67 * values.oopControl + 0.33 * values.oopTp,
     InformationSystems: values => 0.60 * values.infoSysControl + 0.40 * values.infoSysTd,
     LanguageTheory: values => 0.60 * values.langTheoryControl + 0.40 * values.langTheoryTd,
     English2: values => 1.00 * values.english2Control
@@ -110,8 +110,8 @@ function init() {
                 title: 'Computer Architecture',
                 coefficient: 2,
                 fields: [
-                    { name: 'compArchControl', placeholder: 'Control (×2)' },
-                    { name: 'compArchTp', placeholder: 'TP (×1)' }
+                    { name: 'compArchControl', placeholder: 'Control (66%)' },
+                    { name: 'compArchTp', placeholder: 'TP (34%)' }
                 ]
             },
             {
@@ -134,8 +134,8 @@ function init() {
                 title: 'Object-Oriented Programming',
                 coefficient: 3,
                 fields: [
-                    { name: 'oopControl', placeholder: 'Control (×2)' },
-                    { name: 'oopTp', placeholder: 'TP (×1)' }
+                    { name: 'oopControl', placeholder: 'Control (67%)' },
+                    { name: 'oopTp', placeholder: 'TP (33%)' }
                 ]
             },
             {

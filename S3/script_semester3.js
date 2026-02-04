@@ -3,7 +3,7 @@
 // Initialize state for Semester 3
 const state = initializeState({
     // Unit 1
-    algoDSControl: '', algoDSTd: '', algoDSTp: '',
+    algoDSControl: '', algoDSTdTp: '',
     compArchControl: '', compArchTp: '',
     mathLogicControl: '', mathLogicTd: '',
 
@@ -18,10 +18,10 @@ const state = initializeState({
 
 // Calculation Formulas
 const formulas = {
-    AlgorithmsDataStructures: values => 0.60 * values.algoDSControl + 0.20 * values.algoDSTd + 0.20 * values.algoDSTp,
-    ComputerArchitecture: values => 0.67 * values.compArchControl + 0.33 * values.compArchTp,
+    AlgorithmsDataStructures: values => 0.60 * values.algoDSControl + 0.40 * values.algoDSTdTp,
+    ComputerArchitecture: values => (values.compArchControl * 2 + values.compArchTp) / 3,
     MathematicalLogic: values => 0.67 * values.mathLogicControl + 0.33 * values.mathLogicTd,
-    ObjectOrientedProgramming: values => 0.67 * values.oopControl + 0.33 * values.oopTp,
+    ObjectOrientedProgramming: values => (values.oopControl * 2 + values.oopTp) / 3,
     InformationSystems: values => 0.60 * values.infoSysControl + 0.40 * values.infoSysTd,
     LanguageTheory: values => 0.60 * values.langTheoryControl + 0.40 * values.langTheoryTd,
     English2: values => 1.00 * values.english2Control
@@ -103,16 +103,15 @@ function init() {
                 coefficient: 3,
                 fields: [
                     { name: 'algoDSControl', placeholder: 'Control (60%)' },
-                    { name: 'algoDSTd', placeholder: 'TD (20%)' },
-                    { name: 'algoDSTp', placeholder: 'TP (20%)' }
+                    { name: 'algoDSTdTp', placeholder: 'TD + TP + Interro (40%)' }
                 ]
             },
             {
                 title: 'Computer Architecture',
                 coefficient: 2,
                 fields: [
-                    { name: 'compArchControl', placeholder: 'Control (67%)' },
-                    { name: 'compArchTp', placeholder: 'TP (33%)' }
+                    { name: 'compArchControl', placeholder: 'Control (×2)' },
+                    { name: 'compArchTp', placeholder: 'TP (×1)' }
                 ]
             },
             {
@@ -135,8 +134,8 @@ function init() {
                 title: 'Object-Oriented Programming',
                 coefficient: 3,
                 fields: [
-                    { name: 'oopControl', placeholder: 'Control (67%)' },
-                    { name: 'oopTp', placeholder: 'TP (33%)' }
+                    { name: 'oopControl', placeholder: 'Control (×2)' },
+                    { name: 'oopTp', placeholder: 'TP (×1)' }
                 ]
             },
             {

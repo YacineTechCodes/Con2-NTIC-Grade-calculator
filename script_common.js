@@ -231,6 +231,208 @@ function createUnit(unitConfig, handleInputFn, handleBlurFn) {
 }
 
 // ============================================================================
+// TOGGLEABLE MODULE SYSTEM
+// ============================================================================
+
+/**
+ * Create a module with a merge/split toggle button
+ * @param {Object} config - Configuration object
+ * @param {string} config.moduleId - Unique identifier for the module
+ * @param {string} config.title - Module display title
+ * @param {number} config.coefficient - Module coefficient
+ * @param {Object} config.mergedMode - Configuration for merged mode
+ * @param {Array} config.mergedMode.fields - Fields when merged [{name, placeholder}]
+ * @param {Object} config.separateMode - Configuration for separate mode
+ * @param {Array} config.separateMode.fields - Fields when separate [{name, placeholder}]
+ * @param {Object} state - Application state object
+ * @param {Function} updateCalculations - Callback to update calculations
+ * @param {Function} handleInputFn - Input handler function
+ * @param {Function} handleBlurFn - Blur handler function
+ * @returns {Object} Toggle module controller with element and methods
+ */
+function createToggleableModule(config, state, updateCalculations, handleInputFn, handleBlurFn) {
+    // Track mode state (true = merged, false = separate)
+    let isMerged = true;
+
+    const moduleDiv = document.createElement('div');
+    moduleDiv.className = 'module';
+    moduleDiv.dataset.moduleId = config.moduleId;
+
+    // Create header
+    const header = document.createElement('div');
+    header.className = 'module-header';
+
+    const title = document.createElement('h3');
+    title.textContent = config.title;
+
+    const headerRight = document.createElement('div');
+    headerRight.style.display = 'flex';
+    headerRight.style.alignItems = 'center';
+    headerRight.style.gap = '8px';
+
+    // Toggle button
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'toggle-mode-btn';
+    toggleBtn.textContent = '⇄ Split';
+    toggleBtn.title = 'Switch to separate inputs';
+    toggleBtn.style.cssText = `
+        padding: 4px 8px;
+        font-size: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background: var(--input-bg);
+        color: var(--text-color);
+        cursor: pointer;
+        min-height: 28px;
+        min-width: auto;
+    `;
+
+    // Coefficient
+    const coef = document.createElement('span');
+    coef.className = 'coefficient';
+    coef.textContent = `Coef: ${config.coefficient}`;
+
+    headerRight.appendChild(toggleBtn);
+    headerRight.appendChild(coef);
+    header.appendChild(title);
+    header.appendChild(headerRight);
+    moduleDiv.appendChild(header);
+
+    // Create grade display (will be at the end)
+    const gradeDisplay = document.createElement('div');
+    gradeDisplay.className = 'module-grade';
+    gradeDisplay.dataset.module = config.title;
+    gradeDisplay.textContent = 'Grade: 0.00';
+
+    // Function to get current fields based on mode
+    function getCurrentFields() {
+        return isMerged ? config.mergedMode.fields : config.separateMode.fields;
+    }
+
+    // Function to get fields to clear when switching
+    function getFieldsToClear() {
+        return isMerged ? config.mergedMode.fields : config.separateMode.fields;
+    }
+
+    // Function to check if current mode has values
+    function hasValues() {
+        const fields = getCurrentFields();
+        // Skip the first field (usually Control) - only check the toggleable fields
+        return fields.slice(1).some(field => {
+            const val = state.grades[field.name];
+            return val !== '' && val !== 0 && val !== undefined;
+        });
+    }
+
+    // Function to rebuild input fields
+    function rebuildFields() {
+        // Remove existing input groups
+        const inputGroups = moduleDiv.querySelectorAll('.input-group');
+        inputGroups.forEach(group => group.remove());
+
+        // Create new fields
+        const fields = getCurrentFields();
+        fields.forEach(field => {
+            const group = document.createElement('div');
+            group.className = 'input-group';
+
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.min = 0;
+            input.max = 20;
+            input.step = 0.01;
+            input.name = field.name;
+            input.placeholder = field.placeholder;
+            input.value = state.grades[field.name] !== '' && state.grades[field.name] !== undefined
+                ? state.grades[field.name] : '';
+            input.onwheel = () => input.blur();
+            input.addEventListener('input', handleInputFn);
+            input.addEventListener('blur', handleBlurFn);
+
+            const max = document.createElement('span');
+            max.textContent = '/20';
+
+            group.appendChild(input);
+            group.appendChild(max);
+            moduleDiv.insertBefore(group, gradeDisplay);
+        });
+
+        // Update button text
+        toggleBtn.textContent = isMerged ? '⇄ Split' : '⇄ Merge';
+        toggleBtn.title = isMerged ? 'Switch to separate inputs' : 'Switch to merged input';
+    }
+
+    // Toggle handler
+    function toggle() {
+        // Check for values (only in toggleable fields, not control)
+        if (hasValues()) {
+            if (!confirm('Switching modes will clear the values. Continue?')) {
+                return;
+            }
+        }
+
+        // Clear toggleable field values (skip first field which is usually Control)
+        const fieldsToClear = getFieldsToClear();
+        fieldsToClear.slice(1).forEach(field => {
+            state.grades[field.name] = '';
+        });
+
+        // Toggle mode
+        isMerged = !isMerged;
+
+        // Rebuild UI
+        rebuildFields();
+        updateCalculations();
+    }
+
+    toggleBtn.addEventListener('click', toggle);
+
+    // Initial build
+    rebuildFields();
+    moduleDiv.appendChild(gradeDisplay);
+
+    // Return controller object
+    return {
+        element: moduleDiv,
+        isMerged: () => isMerged,
+        setMode: (merged) => {
+            if (merged !== isMerged) {
+                // Clear values silently when programmatically setting mode
+                const fieldsToClear = getFieldsToClear();
+                fieldsToClear.slice(1).forEach(field => {
+                    state.grades[field.name] = '';
+                });
+                isMerged = merged;
+                rebuildFields();
+            }
+        },
+        rebuildFields,
+        getModuleId: () => config.moduleId
+    };
+}
+
+/**
+ * Detect toggle mode from saved grades
+ * @param {Object} savedGrades - Saved grades object
+ * @param {Object} config - Toggle module config
+ * @returns {boolean} True if merged mode, false if separate mode
+ */
+function detectToggleModeFromSave(savedGrades, config) {
+    // Check if separate mode fields have values
+    const hasSeparate = config.separateMode.fields.slice(1).some(field =>
+        savedGrades[field.name] !== undefined && savedGrades[field.name] !== ''
+    );
+    const hasMerged = config.mergedMode.fields.slice(1).some(field =>
+        savedGrades[field.name] !== undefined && savedGrades[field.name] !== ''
+    );
+
+    if (hasSeparate && !hasMerged) {
+        return false; // separate mode
+    }
+    return true; // merged mode (default)
+}
+
+// ============================================================================
 // SAVE/LOAD SYSTEM
 // ============================================================================
 

@@ -1,7 +1,24 @@
 // semester3.js - Specific code for Semester 3
 
-// Track TD/TP mode for Algorithms & Data Structures
-let algoDSMergedMode = true; // true = merged (TD+TP), false = separate (TD, TP)
+// Toggle module configuration for Algorithms & Data Structures
+const algoDSToggleConfig = {
+    moduleId: 'algods',
+    title: 'Algorithms & Data Structures',
+    coefficient: 3,
+    mergedMode: {
+        fields: [
+            { name: 'algoDSControl', placeholder: 'Control (60%)' },
+            { name: 'algoDSTdTp', placeholder: 'TD + TP + Interro (40%)' }
+        ]
+    },
+    separateMode: {
+        fields: [
+            { name: 'algoDSControl', placeholder: 'Control (60%)' },
+            { name: 'algoDSTd', placeholder: 'TD (20%)' },
+            { name: 'algoDSTp', placeholder: 'TP (20%)' }
+        ]
+    }
+};
 
 // Initialize state for Semester 3 (include all possible fields)
 const state = initializeState({
@@ -22,11 +39,14 @@ const state = initializeState({
     english2Control: ''
 });
 
+// Reference to toggle module controller
+let algoDSToggle = null;
+
 // Calculation Formulas
 const formulas = {
     // Dynamic formula based on mode
     AlgorithmsDataStructures: values => {
-        if (algoDSMergedMode) {
+        if (algoDSToggle && algoDSToggle.isMerged()) {
             return 0.60 * values.algoDSControl + 0.40 * values.algoDSTdTp;
         } else {
             return 0.60 * values.algoDSControl + 0.20 * values.algoDSTd + 0.20 * values.algoDSTp;
@@ -97,250 +117,6 @@ function updateCalculations() {
     updateDisplay(state, moduleNames);
 }
 
-// Toggle TD/TP mode for Algorithms & Data Structures
-function toggleAlgoDSMode() {
-    // Check if current mode has values
-    let hasValues = false;
-    if (algoDSMergedMode) {
-        hasValues = state.grades.algoDSTdTp !== '' && state.grades.algoDSTdTp !== 0;
-    } else {
-        hasValues = (state.grades.algoDSTd !== '' && state.grades.algoDSTd !== 0) ||
-            (state.grades.algoDSTp !== '' && state.grades.algoDSTp !== 0);
-    }
-
-    // Ask for confirmation if there are values
-    if (hasValues) {
-        if (!confirm('Switching modes will clear the TD/TP values. Continue?')) {
-            return;
-        }
-    }
-
-    // Clear the values for current mode
-    if (algoDSMergedMode) {
-        state.grades.algoDSTdTp = '';
-    } else {
-        state.grades.algoDSTd = '';
-        state.grades.algoDSTp = '';
-    }
-
-    // Toggle mode
-    algoDSMergedMode = !algoDSMergedMode;
-
-    // Rebuild the Algorithms & Data Structures module
-    rebuildAlgoDSModule();
-    updateCalculations();
-}
-
-// Rebuild the Algorithms & Data Structures module with current mode
-function rebuildAlgoDSModule() {
-    const handleInputFn = (e) => handleInput(e, state, updateCalculations);
-    const handleBlurFn = (e) => handleBlur(e, state, updateCalculations);
-
-    const algoDSModule = document.querySelector('[data-module-id="algods"]');
-    if (!algoDSModule) return;
-
-    // Clear existing input groups (keep header and grade display)
-    const inputGroups = algoDSModule.querySelectorAll('.input-group');
-    inputGroups.forEach(group => group.remove());
-
-    // Get reference points
-    const gradeDisplay = algoDSModule.querySelector('.module-grade');
-
-    // Create new fields based on mode
-    const fields = algoDSMergedMode
-        ? [
-            { name: 'algoDSControl', placeholder: 'Control (60%)' },
-            { name: 'algoDSTdTp', placeholder: 'TD + TP + Interro (40%)' }
-        ]
-        : [
-            { name: 'algoDSControl', placeholder: 'Control (60%)' },
-            { name: 'algoDSTd', placeholder: 'TD (20%)' },
-            { name: 'algoDSTp', placeholder: 'TP (20%)' }
-        ];
-
-    // Create and insert input groups
-    fields.forEach(field => {
-        const group = document.createElement('div');
-        group.className = 'input-group';
-
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.min = 0;
-        input.max = 20;
-        input.step = 0.01;
-        input.name = field.name;
-        input.placeholder = field.placeholder;
-        input.value = state.grades[field.name] !== '' ? state.grades[field.name] : '';
-        input.onwheel = () => input.blur();
-        input.addEventListener('input', handleInputFn);
-        input.addEventListener('blur', handleBlurFn);
-
-        const max = document.createElement('span');
-        max.textContent = '/20';
-
-        group.appendChild(input);
-        group.appendChild(max);
-
-        // Insert before grade display
-        algoDSModule.insertBefore(group, gradeDisplay);
-    });
-
-    // Update toggle button text
-    const toggleBtn = algoDSModule.querySelector('.toggle-mode-btn');
-    if (toggleBtn) {
-        toggleBtn.textContent = algoDSMergedMode ? '⇄ Split' : '⇄ Merge';
-        toggleBtn.title = algoDSMergedMode
-            ? 'Switch to separate TD and TP inputs'
-            : 'Switch to merged TD+TP input';
-    }
-}
-
-// Create custom Algorithms & Data Structures module with toggle button
-function createAlgoDSModule(handleInputFn, handleBlurFn) {
-    const moduleDiv = document.createElement('div');
-    moduleDiv.className = 'module';
-    moduleDiv.dataset.moduleId = 'algods';
-
-    // Create header
-    const header = document.createElement('div');
-    header.className = 'module-header';
-
-    const title = document.createElement('h3');
-    title.textContent = 'Algorithms & Data Structures';
-
-    const headerRight = document.createElement('div');
-    headerRight.style.display = 'flex';
-    headerRight.style.alignItems = 'center';
-    headerRight.style.gap = '8px';
-
-    // Toggle button
-    const toggleBtn = document.createElement('button');
-    toggleBtn.className = 'toggle-mode-btn';
-    toggleBtn.textContent = algoDSMergedMode ? '⇄ Split' : '⇄ Merge';
-    toggleBtn.title = algoDSMergedMode
-        ? 'Switch to separate TD and TP inputs'
-        : 'Switch to merged TD+TP input';
-    toggleBtn.style.cssText = `
-        padding: 4px 8px;
-        font-size: 0.75rem;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        background: var(--input-bg);
-        color: var(--text-color);
-        cursor: pointer;
-        min-height: 28px;
-        min-width: auto;
-    `;
-    toggleBtn.addEventListener('click', toggleAlgoDSMode);
-
-    // Coefficient
-    const coef = document.createElement('span');
-    coef.className = 'coefficient';
-    coef.textContent = 'Coef: 3';
-
-    headerRight.appendChild(toggleBtn);
-    headerRight.appendChild(coef);
-    header.appendChild(title);
-    header.appendChild(headerRight);
-    moduleDiv.appendChild(header);
-
-    // Create initial input fields based on mode
-    const fields = algoDSMergedMode
-        ? [
-            { name: 'algoDSControl', placeholder: 'Control (60%)' },
-            { name: 'algoDSTdTp', placeholder: 'TD + TP + Interro (40%)' }
-        ]
-        : [
-            { name: 'algoDSControl', placeholder: 'Control (60%)' },
-            { name: 'algoDSTd', placeholder: 'TD (20%)' },
-            { name: 'algoDSTp', placeholder: 'TP (20%)' }
-        ];
-
-    fields.forEach(field => {
-        const group = document.createElement('div');
-        group.className = 'input-group';
-
-        const input = document.createElement('input');
-        input.type = 'number';
-        input.min = 0;
-        input.max = 20;
-        input.step = 0.01;
-        input.name = field.name;
-        input.placeholder = field.placeholder;
-        input.onwheel = () => input.blur();
-        input.addEventListener('input', handleInputFn);
-        input.addEventListener('blur', handleBlurFn);
-
-        const max = document.createElement('span');
-        max.textContent = '/20';
-
-        group.appendChild(input);
-        group.appendChild(max);
-        moduleDiv.appendChild(group);
-    });
-
-    // Create grade display
-    const gradeDisplay = document.createElement('div');
-    gradeDisplay.className = 'module-grade';
-    gradeDisplay.dataset.module = 'Algorithms & Data Structures';
-    gradeDisplay.textContent = 'Grade: 0.00';
-    moduleDiv.appendChild(gradeDisplay);
-
-    return moduleDiv;
-}
-
-// Detect mode from saved data
-function detectModeFromSave(savedGrades) {
-    // If separate mode fields have values, use separate mode
-    const hasSeparate = (savedGrades.algoDSTd !== undefined && savedGrades.algoDSTd !== '') ||
-        (savedGrades.algoDSTp !== undefined && savedGrades.algoDSTp !== '');
-    const hasMerged = savedGrades.algoDSTdTp !== undefined && savedGrades.algoDSTdTp !== '';
-
-    if (hasSeparate && !hasMerged) {
-        return false; // separate mode
-    }
-    return true; // merged mode (default)
-}
-
-// Custom load handler that detects and applies the correct mode
-function customLoadGrades(save) {
-    const newMode = detectModeFromSave(save.grades);
-
-    // If mode needs to change, switch it first (without confirmation since we're loading)
-    if (newMode !== algoDSMergedMode) {
-        // Clear current values silently
-        if (algoDSMergedMode) {
-            state.grades.algoDSTdTp = '';
-        } else {
-            state.grades.algoDSTd = '';
-            state.grades.algoDSTp = '';
-        }
-        algoDSMergedMode = newMode;
-        rebuildAlgoDSModule();
-    }
-
-    // Now load the saved values
-    Object.keys(state.grades).forEach(key => {
-        state.grades[key] = '';
-        const input = document.querySelector(`input[name="${key}"]`);
-        if (input) input.value = '';
-    });
-
-    Object.keys(save.grades).forEach(key => {
-        if (key in state.grades) {
-            const savedValue = save.grades[key];
-            state.grades[key] = savedValue;
-            const input = document.querySelector(`input[name="${key}"]`);
-            if (input) {
-                input.value = savedValue !== '' ? savedValue : '';
-            }
-        }
-    });
-
-    updateCalculations();
-    requestAnimationFrame(() => updateCalculations());
-}
-
 // Initialize the page
 function init() {
     // Create input handlers with specific state
@@ -349,7 +125,7 @@ function init() {
 
     const unitSections = document.getElementById('unitSections');
 
-    // Unit 1: Fundamental (with custom AlgoDS module)
+    // Unit 1: Fundamental (with toggleable AlgoDS module)
     const unit1Div = document.createElement('div');
     unit1Div.className = 'unit-section';
 
@@ -367,8 +143,15 @@ function init() {
     const unit1Grid = document.createElement('div');
     unit1Grid.className = 'grid md:grid-cols-3';
 
-    // Add custom AlgoDS module
-    unit1Grid.appendChild(createAlgoDSModule(handleInputFn, handleBlurFn));
+    // Create toggleable AlgoDS module using global function
+    algoDSToggle = createToggleableModule(
+        algoDSToggleConfig,
+        state,
+        updateCalculations,
+        handleInputFn,
+        handleBlurFn
+    );
+    unit1Grid.appendChild(algoDSToggle.element);
 
     // Add other modules
     unit1Grid.appendChild(createModule({
@@ -443,7 +226,36 @@ function init() {
     let savedGrades = JSON.parse(localStorage.getItem('savedGradesSemester3')) || [];
     const savesList = document.getElementById('savesList');
 
-    // Custom saves list renderer with mode detection
+    // Custom load handler with mode detection
+    function customLoadGrades(save) {
+        // Detect and apply correct mode
+        const shouldBeMerged = detectToggleModeFromSave(save.grades, algoDSToggleConfig);
+        algoDSToggle.setMode(shouldBeMerged);
+
+        // Clear all values
+        Object.keys(state.grades).forEach(key => {
+            state.grades[key] = '';
+            const input = document.querySelector(`input[name="${key}"]`);
+            if (input) input.value = '';
+        });
+
+        // Load saved values
+        Object.keys(save.grades).forEach(key => {
+            if (key in state.grades) {
+                const savedValue = save.grades[key];
+                state.grades[key] = savedValue;
+                const input = document.querySelector(`input[name="${key}"]`);
+                if (input) {
+                    input.value = savedValue !== '' ? savedValue : '';
+                }
+            }
+        });
+
+        updateCalculations();
+        requestAnimationFrame(() => updateCalculations());
+    }
+
+    // Custom saves list renderer
     function updateSavesListCustom() {
         if (!savesList) return;
         savesList.innerHTML = '<h4>Saved Grades:</h4>';
@@ -510,7 +322,7 @@ function init() {
         });
     }
 
-    // Setup load button to show saves list
+    // Setup load button
     const loadButton = document.getElementById('loadButton');
     if (loadButton) {
         loadButton.addEventListener('click', () => {

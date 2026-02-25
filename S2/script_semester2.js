@@ -35,9 +35,7 @@ const moduleNames = {
 
 // Update calculations for Semester 2
 function updateCalculations() {
-    const numbers = Object.fromEntries(
-        Object.entries(state.grades).map(([key, value]) => [key, parseFloat(value) || 0])
-    );
+    const numbers = parseGrades(state.grades);
 
     // Module grades
     state.results.modules = {
@@ -72,16 +70,16 @@ function updateCalculations() {
     // Unit 5 Discovery: Electronics(coef 2)
     state.results.unit5 = state.results.modules['Electronics'];
 
-    // Calculate final result with credits: Analysis 2(6) + Algebra 2(5) + Algorithms and Data Structure 2(7) + Machine Structure 2(5) + Mathematical Logic(2) + Introduction to AI(2) + Electronics(4)
+    // Calculate final result using the same coefficients shown on the website
     state.results.finalResult = (
-        state.results.modules['Analysis 2'] * 6 +
-        state.results.modules['Algebra 2'] * 5 +
-        state.results.modules['Algorithms and Data Structure 2'] * 7 +
-        state.results.modules['Machine Structure 2'] * 5 +
-        state.results.modules['Mathematical Logic'] * 2 +
-        state.results.modules['Introduction to AI'] * 2 +
-        state.results.modules['Electronics'] * 4
-    ) / 31;
+        state.results.modules['Analysis 2'] * 4 +
+        state.results.modules['Algebra 2'] * 2 +
+        state.results.modules['Algorithms and Data Structure 2'] * 5 +
+        state.results.modules['Machine Structure 2'] * 3 +
+        state.results.modules['Mathematical Logic'] * 1 +
+        state.results.modules['Introduction to AI'] * 1 +
+        state.results.modules['Electronics'] * 2
+    ) / 18;
 
     updateDisplay(state, moduleNames);
 }

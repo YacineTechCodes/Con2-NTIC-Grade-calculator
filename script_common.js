@@ -18,9 +18,25 @@ function initializeState(gradeFields) {
             unit2: 0.00,
             unit3: 0.00,
             unit4: 0.00,
+            unit5: 0.00,
             modules: {}
         }
     };
+}
+
+/**
+ * Parse all grade string values to numbers (cross-browser compatible)
+ * Replaces Object.fromEntries() which is not supported in older browsers
+ * @param {Object} grades - Grade state object with string values
+ * @returns {Object} Object with numeric values (0 for empty/invalid)
+ */
+function parseGrades(grades) {
+    var result = {};
+    var keys = Object.keys(grades);
+    for (var i = 0; i < keys.length; i++) {
+        result[keys[i]] = parseFloat(grades[keys[i]]) || 0;
+    }
+    return result;
 }
 
 // ============================================================================

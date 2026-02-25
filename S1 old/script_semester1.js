@@ -38,9 +38,7 @@ const moduleNames = {
 
 // Update calculations for Semester 1
 function updateCalculations() {
-    const numbers = Object.fromEntries(
-        Object.entries(state.grades).map(([key, value]) => [key, parseFloat(value) || 0])
-    );
+    const numbers = parseGrades(state.grades);
 
     // Module grades
     state.results.modules = {

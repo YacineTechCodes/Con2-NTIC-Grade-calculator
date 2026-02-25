@@ -35,9 +35,7 @@ const moduleNames = {
 
 // Update calculations for Semester 1
 function updateCalculations() {
-    const numbers = Object.fromEntries(
-        Object.entries(state.grades).map(([key, value]) => [key, parseFloat(value) || 0])
-    );
+    const numbers = parseGrades(state.grades);
 
     // Module grades
     state.results.modules = {
@@ -72,16 +70,16 @@ function updateCalculations() {
     // Unit 5 Discovery: Electricity(coef 2)
     state.results.unit5 = state.results.modules['Electricity'];
 
-    // Calculate final result with credits: Analysis 1(6) + Algebra 1(4) + Algorithms and Data Structure 1(7) + Machine Structure 1(5) + Open Source(2) + English 1(2) + Electricity(4)
+    // Calculate final result using the same coefficients shown on the website
     state.results.finalResult = (
-        state.results.modules['Analysis 1'] * 6 +
-        state.results.modules['Algebra 1'] * 4 +
-        state.results.modules['Algorithms and Data Structure 1'] * 7 +
-        state.results.modules['Machine Structure 1'] * 5 +
-        state.results.modules['Open Source'] * 2 +
-        state.results.modules['English 1'] * 2 +
-        state.results.modules['Electricity'] * 4
-    ) / 30;
+        state.results.modules['Analysis 1'] * 4 +
+        state.results.modules['Algebra 1'] * 2 +
+        state.results.modules['Algorithms and Data Structure 1'] * 5 +
+        state.results.modules['Machine Structure 1'] * 3 +
+        state.results.modules['Open Source'] * 1 +
+        state.results.modules['English 1'] * 1 +
+        state.results.modules['Electricity'] * 2
+    ) / 18;
 
     updateDisplay(state, moduleNames);
 }

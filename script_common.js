@@ -403,9 +403,11 @@ function createToggleableModule(config, state, updateCalculations, handleInputFn
 
     toggleBtn.addEventListener('click', toggle);
 
+    // Append gradeDisplay FIRST so rebuildFields can use insertBefore(group, gradeDisplay)
+    moduleDiv.appendChild(gradeDisplay);
+
     // Initial build
     rebuildFields();
-    moduleDiv.appendChild(gradeDisplay);
 
     // Return controller object
     return {
